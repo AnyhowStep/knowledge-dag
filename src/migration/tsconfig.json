@@ -1,0 +1,16 @@
+{
+    "extends" : "../../tsconfig-base.json",
+    "compilerOptions": {
+        "outDir": "../../dist/template",
+        "declarationDir": "../../dist/template",
+        "types": [
+            "@types/node"
+        ]
+    },
+    "references" : [
+        { "path": "../table" }
+    ],
+    "include" : [
+        "./**/*.ts"
+    ]
+}

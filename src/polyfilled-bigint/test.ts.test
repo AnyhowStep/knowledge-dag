@@ -1,0 +1,47 @@
+declare let x : bigint;
+declare function log (arg : any) : void;
+
+//These should error
+log(x+x);
+log(x-x);
+log(x*x);
+log(x/x);
+log(x**x);
+log(x%x);
+//log(+x);
+log(-x);
+
+log(++x);
+log(--x);
+log(x++);
+log(x--);
+
+log(x==x);
+log(x!=x);
+log(x===x);
+log(x!==x);
+log(x>x);
+log(x<x);
+log(x>=x);
+log(x<=x);
+
+//These should not error
+log(x==undefined);
+log(x!=undefined);
+log(x===undefined);
+log(x!==undefined);
+
+log(undefined==x);
+log(undefined!=x);
+log(undefined===x);
+log(undefined!==x);
+
+log(x==null);
+log(x!=null);
+log(x===null);
+log(x!==null);
+
+log(null==x);
+log(null!=x);
+log(null===x);
+log(null!==x);

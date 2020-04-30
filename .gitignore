@@ -1,0 +1,5 @@
+node_modules
+dist
+development.env
+client-public-config.json
+.vscode/settings.json

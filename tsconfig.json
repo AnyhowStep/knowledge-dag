@@ -1,0 +1,15 @@
+{
+    "compilerOptions" : {
+        "strictNullChecks": true
+    },
+    "references" : [
+        { "path" : "src/polyfilled-bigint" },
+        { "path" : "src/mapper" },
+        { "path" : "src/table" },
+        { "path" : "src/route-declaration" },
+        { "path" : "src/api-mapper" },
+        { "path" : "src/api" },
+        { "path" : "src/api-handler" }
+    ],
+    "files" : []
+}

@@ -1,0 +1,14 @@
+{
+    "extends" : "../../tsconfig-base.json",
+    "compilerOptions": {
+        "outDir": "../../dist/api-mapper",
+        "declarationDir": "../../dist/api-mapper",
+        "types": []
+    },
+    "references" : [
+        { "path": "../mapper" }
+    ],
+    "include" : [
+        "./**/*.ts"
+    ]
+}

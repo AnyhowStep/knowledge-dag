@@ -1,0 +1,14 @@
+{
+    "extends" : "../../tsconfig-base.json",
+    "compilerOptions": {
+        "outDir": "../../dist/table",
+        "declarationDir": "../../dist/table",
+        "types": []
+    },
+    "references" : [
+        { "path" : "../mapper" }
+    ],
+    "include" : [
+        "./**/*.ts"
+    ]
+}

@@ -1,0 +1,14 @@
+{
+    "extends" : "../../tsconfig-base.json",
+    "compilerOptions": {
+        "outDir": "../../dist/dao",
+        "declarationDir": "../../dist/dao",
+        "types": []
+    },
+    "references" : [
+        { "path": "../table" }
+    ],
+    "include" : [
+        "./**/*.ts"
+    ]
+}

@@ -1,0 +1,15 @@
+{
+    "extends" : "../../tsconfig-base.json",
+    "compilerOptions": {
+        "outDir": "../../dist/api-handler",
+        "declarationDir": "../../dist/api-handler",
+        "types": []
+    },
+    "references" : [
+        { "path": "../api" },
+        { "path": "../dao" }
+    ],
+    "include" : [
+        "./**/*.ts"
+    ]
+}

@@ -1,0 +1,15 @@
+{
+    "extends" : "../../tsconfig-base.json",
+    "compilerOptions": {
+        "outDir": "../../dist/polyfilled-bigint",
+        "declarationDir": "../../dist/polyfilled-bigint",
+        "types": [
+            "@types/node"
+        ]
+    },
+    "references" : [
+    ],
+    "include" : [
+        "./**/*.ts"
+    ]
+}

@@ -1,0 +1,14 @@
+{
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "typescript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces": false,
+    "files.insertFinalNewline": true,
+    "files.trimFinalNewlines": true,
+    "eslint.validate": [
+        "typescript"
+    ],
+    "eslint.alwaysShowStatus": true,
+    "eslint.options": {
+    },
+    "eslint.provideLintTask": true,
+    "eslint.enable": true
+}

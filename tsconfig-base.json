@@ -1,0 +1,40 @@
+{
+    "compilerOptions": {
+        "sourceMap": true,
+        "declarationMap": true,
+        "declaration": true,
+        "diagnostics": true,
+        "extendedDiagnostics": true,
+        "composite": true,
+
+        "experimentalDecorators": false,
+
+        "allowJs": false,
+
+        "allowUnreachableCode": false,
+        "allowUnusedLabels": false,
+        "alwaysStrict": true,
+
+        "newLine": "lf",
+
+        "noEmitOnError": true,
+        "noImplicitAny": true,
+        "noImplicitReturns": true,
+        "noImplicitThis": true,
+        "noImplicitUseStrict": false,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "noFallthroughCasesInSwitch": true,
+        "noErrorTruncation": true,
+
+        "strict": true,
+
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "target": "ES2016",
+        "lib": ["ES2016", "ESNext.AsyncIterable"],
+        "jsx": "react",
+        "jsxFactory": "React.createElement"
+    },
+    "compileOnSave": false
+}

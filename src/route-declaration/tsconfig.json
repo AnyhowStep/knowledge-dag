@@ -1,0 +1,14 @@
+{
+    "extends" : "../../tsconfig-base.json",
+    "compilerOptions": {
+        "outDir": "../../dist/route-declaration",
+        "declarationDir": "../../dist/route-declaration",
+        "types": []
+    },
+    "references" : [
+        { "path" : "../mapper" }
+    ],
+    "include" : [
+        "./**/*.ts"
+    ]
+}
