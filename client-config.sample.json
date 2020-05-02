@@ -1,0 +1,4 @@
+{
+    "SERVER_ROOT" : "http://localhost:8228",
+    "API_ROOT" : "/api"
+}

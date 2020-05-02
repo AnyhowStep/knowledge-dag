@@ -1,0 +1,15 @@
+{
+    "compilerOptions" : {
+        "jsx": "react"
+    },
+    "references" : [
+        { "path" : "src/client" },
+        { "path" : "src/route-declaration" },
+        { "path" : "src/mapper" },
+        { "path" : "src/api" },
+        { "path" : "src/api-mapper" }
+    ],
+    "files" : [
+        "src/client/config.d.ts"
+    ]
+}

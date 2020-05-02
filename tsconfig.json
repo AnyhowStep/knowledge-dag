@@ -10,7 +10,10 @@
         { "path" : "src/route-declaration" },
         { "path" : "src/api-mapper" },
         { "path" : "src/api" },
-        { "path" : "src/api-handler" }
+        { "path" : "src/api-handler" },
+        { "path" : "src/client" },
+        { "path" : "src/server" },
+        { "path" : "src/server-main" }
     ],
     "files" : []
 }

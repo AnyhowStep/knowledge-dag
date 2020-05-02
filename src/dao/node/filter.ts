@@ -37,21 +37,24 @@ export function filter (args : {
     tag? : string[],
     keyword? : string[],
 }) {
+    /**
+     * We `.slice(0, 5)` as a naive attempt at preventing DoS through querying
+     */
     return sql.and(
         ...(
             args.title == undefined ?
             [true] :
-            args.title.map(title => titleLike(title))
+            args.title.slice(0, 5).map(title => titleLike(title))
         ),
         ...(
             args.tag == undefined ?
             [true] :
-            args.tag.map(tag => tagLike(tag))
+            args.tag.slice(0, 5).map(tag => tagLike(tag))
         ),
         ...(
             args.keyword == undefined ?
             [true] :
-            args.keyword.map(keyword => sql.or(
+            args.keyword.slice(0, 5).map(keyword => sql.or(
                 titleLike(keyword),
                 tagLike(keyword)
             ))

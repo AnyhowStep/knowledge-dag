@@ -1,0 +1,14 @@
+{
+    "extends" : "../../tsconfig-base.json",
+    "compilerOptions": {
+        "outDir": "../../dist/server",
+        "declarationDir": "../../dist/server",
+        "types": []
+    },
+    "references" : [
+        { "path": "../api-handler" }
+    ],
+    "include" : [
+        "./**/*.ts"
+    ]
+}

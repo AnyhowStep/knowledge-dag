@@ -1,0 +1,14 @@
+{
+    "extends" : "../../tsconfig-base.json",
+    "compilerOptions": {
+        "outDir": "../../dist/server-main",
+        "declarationDir": "../../dist/server-main",
+        "types": []
+    },
+    "references" : [
+        { "path": "../server" }
+    ],
+    "include" : [
+        "./**/*.ts"
+    ]
+}

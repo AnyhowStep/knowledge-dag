@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Knowledge DAG</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="stylesheet" href="/semantic.min.css"/>
+        <style>
+            code {
+                padding: .2rem .4rem;
+                font-size: 90%;
+                color: #bd4147;
+                background-color: #f7f7f9;
+                border-radius: .25rem;
+            }
+            pre code {
+                color : inherit;
+                background-color : transparent;
+            }
+            blockquote {
+                padding: .5rem 1rem;
+                margin-bottom: 1rem;
+                font-size: 1.25rem;
+                border-left: .25rem solid #eceeef;
+                background-color: #f8f8fa;
+            }
+            h1 small, h2 small, h3 small, h4 small, h5 small, h6 small, a small {
+                font-weight: normal;
+                line-height: 1;
+                color: #777;
+            }
+            .main.text.container {
+                max-width: inherit !important;
+            }
+            .main {
+                padding-top: 65px;
+                /*min-height: 1000px;*/
+            }
+            .graph-page-node-view-container {
+                position: absolute;
+                top   : 65px;
+                left  :0px;
+                width : 100%;
+                height: -webkit-calc(100% - 65px);
+                height:    -moz-calc(100% - 65px);
+                height:         calc(100% - 65px);
+
+                background-color: rgba(255,255,255,0.9);
+                overflow: auto;
+            }
+            .mini-home-button-text {
+                display : none !important;
+            }
+            @media only screen and (max-width: 768px) {
+                .home-button-text {
+                    display : none !important;
+                }
+                .mini-home-button-text {
+                    display : initial !important;
+                }
+            }
+            .hide {
+                display : none !important;
+            }
+            .hidden {
+                display : none !important;
+            }
+            .body-height {
+                height: -webkit-calc(100% - 65px);
+                height:    -moz-calc(100% - 65px);
+                height:         calc(100% - 65px);
+            }
+            .fill-height {
+                height : 100% !important;
+                max-height : 100% !important;
+            }
+            .flex-container {
+                display: flex !important;
+                flex-flow: column !important;
+            }
+            .fill-remaining {
+                flex : 1 !important;
+            }
+            .topmost {
+                z-index : 99;
+            }
+            .center {
+                text-align : center;
+            }
+            .ui.checkbox label, .ui.checkbox+label {
+                font-size : 1.5rem;
+                cursor : pointer;
+            }
+            .ui.checkbox .box, .ui.checkbox label {
+                padding-left : 3rem;
+            }
+            .ui.checkbox {
+                line-height : 2.5rem;
+            }
+            .ui.checkbox .box:before, .ui.checkbox label:before {
+                width : 2.5rem;
+                height : 2.5rem;
+            }
+            .ui.checkbox .box:after, .ui.checkbox label:after {
+                font-size : 2.5rem;
+                width : 2.5rem;
+                height : 2.5rem;
+            }
+            .ui.checkbox input[type=checkbox], .ui.checkbox input[type=radio] {
+                width : 2.5rem;
+                height : 2.5rem;
+            }
+            .ui.extra-mini.label {
+                font-size : 0.5em;
+            }
+            @media only screen and (max-width:1199px) {
+            }
+            @media only screen and (max-width:990px) {
+            }
+            @media only screen and (max-width:767px) {
+                .ui.list .list>.item>.icon+.content, .ui.list .list>.item>.image+.content, .ui.list>.item>.icon+.content, .ui.list>.item>.image+.content {
+                    padding-left : 0px;
+                }
+            }
+            @media only screen and (max-width:679px) {
+            }
+            .dropdown.open > .menu {
+                display : block !important;
+            }
+            .ui.horizontal.list>.item {
+                margin-left : 0px;
+                padding : 0.5em !important;
+            }
+            .ui.horizontal.list:not(.celled)>.item:first-child {
+                padding : 0.5em !important;
+            }
+
+            #main-sidebar {
+                z-index : 102;
+                margin-top : 50px!important;
+                padding-bottom : 100px;
+            }
+
+            .ui.fullscreen.container {
+                background-color: #ffffff;
+                width: 100%!important;
+                height: 100%;
+                max-height: none;
+                position: absolute;
+                top: 0px;
+                left: 0px;
+                z-index: 9999;
+                margin-left:0px!important;
+                margin-right:0px!important;
+                padding:5px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="app" style="height:100%;">
+        </div>
+    </body>
+    <script src="/dist/vendors.bundle.js"></script>
+    <script src="/dist/main.js"></script>
+</html>

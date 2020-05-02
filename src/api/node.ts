@@ -10,10 +10,6 @@ export const NodeApi = rc.toAxiosApi({
         .append("/node")
         .appendParam(mapper.nodeId)
         .append("/detailed")
-        /**
-         * @todo Add optional params to `route-client`
-         */
-        .appendParam(tm.string().withName("urlFriendlyTitle"))
         .setResponse(apiMapper.nodeDetailed),
 
     create : rd.route()

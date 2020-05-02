@@ -1,8 +1,8 @@
 {
     "extends" : "../../tsconfig-base.json",
     "compilerOptions": {
-        "outDir": "../../dist/template",
-        "declarationDir": "../../dist/template",
+        "outDir": "../../dist/migration",
+        "declarationDir": "../../dist/migration",
         "types": [
             "@types/node"
         ]

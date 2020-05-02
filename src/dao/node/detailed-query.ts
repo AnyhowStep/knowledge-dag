@@ -4,6 +4,11 @@ import * as table from "../../table";
 export function detailedQuery () {
     return sql
         .from(table.node)
+        .orderBy(columns => [
+            columns.depth.desc(),
+            columns.createdAt.desc(),
+            columns.nodeId.desc(),
+        ])
         .select(columns => [
             columns.nodeId,
             columns.createdAt,

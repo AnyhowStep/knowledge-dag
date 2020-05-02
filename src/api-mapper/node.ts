@@ -55,7 +55,7 @@ export const createNodeBody = tm.object(
     m.edit.description,
     m.edit.content,
 
-    tm.array(m.tag.title).withName("tags"),
+    tm.readOnlyArray(m.tag.title).withName("tags"),
 );
 export type CreateNodeBody = ReturnType<typeof createNodeBody>;
 
@@ -64,6 +64,6 @@ export const updateNodeBody = tm.object(
     m.edit.description,
     m.edit.content,
 
-    tm.array(m.tag.title).withName("tags"),
+    tm.readOnlyArray(m.tag.title).withName("tags"),
 );
 export type UpdateNodeBody = ReturnType<typeof updateNodeBody>;

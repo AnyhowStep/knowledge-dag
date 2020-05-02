@@ -1,5 +1,5 @@
 node_modules
 dist
 development.env
-client-public-config.json
+client-config.json
 .vscode/settings.json

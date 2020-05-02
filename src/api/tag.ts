@@ -7,9 +7,9 @@ export const TagApi = rc.toAxiosApi({
     paginate : rd.paginate(
         rd.route()
             .setMethod("GET")
-            .append("/node")
+            .append("/tag")
             .setQuery(tm.object(
-                mapper.tag.title.optional(),
+                tm.array(tm.mysql.varChar(3, 255)).withName("title").optional(),
             )),
         mapper.tag.title
     ),

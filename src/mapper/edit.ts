@@ -9,7 +9,7 @@ export const edit = tm.fields({
     /**
      * A short string describing the content.
      */
-    title : tm.mysql.varChar(0, 255),
+    title : tm.mysql.varChar(1, 255),
 
     /**
      * A short string summarizing the content.

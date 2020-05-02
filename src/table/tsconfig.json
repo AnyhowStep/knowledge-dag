@@ -3,7 +3,8 @@
     "compilerOptions": {
         "outDir": "../../dist/table",
         "declarationDir": "../../dist/table",
-        "types": []
+        "types": [],
+        "lib": ["ES2016", "ESNext.AsyncIterable", "ES2017.Object"]
     },
     "references" : [
         { "path" : "../mapper" }
