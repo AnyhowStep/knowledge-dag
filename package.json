@@ -4,13 +4,13 @@
   "description": "Represent knowledge with a directed acyclic graph",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "clean": "(rm -r ./dist) || true",
     "build": "tsc -b",
     "watch": "tsc -b -w",
     "migrate-up-to-latest": "ts-node -P ./src/migration/tsconfig.json ./src/migration/migrate-up-to-latest.ts",
     "migrate-down": "ts-node -P ./src/migration/tsconfig.json ./src/migration/migrate-down.ts",
-    "validate-schema": "ts-node -P ./src/migration/tsconfig.json ./src/migration/validate-schema.ts"
+    "validate-schema": "ts-node -P ./src/migration/tsconfig.json ./src/migration/validate-schema.ts",
+    "test": "ts-node -P ./test/run-time/tsconfig.json -r ./test/run-time/tape-stream.ts ./test/run-time/runner.ts"
   },
   "author": "anyhowstep",
   "license": "MIT",
@@ -18,11 +18,13 @@
     "@anyhowstep/typed-env": "^2.1.1",
     "@types/express": "^4.17.6",
     "@types/node": "^13.13.4",
+    "@types/tape": "^4.13.0",
     "@typescript-eslint/eslint-plugin": "^1.13.0",
     "@typescript-eslint/parser": "^1.13.0",
     "agnostic-migrator": "^1.0.0",
     "eslint": "^6.8.0",
     "eslint-plugin-local": "^1.0.0",
+    "tape": "^5.0.0",
     "ts-node": "^8.9.1",
     "typescript": "^3.5.1"
   },
