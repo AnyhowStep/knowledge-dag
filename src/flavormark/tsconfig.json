@@ -1,0 +1,16 @@
+{
+    "extends" : "../../tsconfig-base.json",
+    "compilerOptions": {
+        "outDir": "../../dist/flavormark",
+        "declarationDir": "../../dist/flavormark",
+        "types": [],
+        "lib": ["DOM", "ES2016"]
+    },
+    "references" : [
+        { "path": "../dag" }
+    ],
+    "include" : [
+        "./**/*.ts",
+        "./**/*.tsx"
+    ]
+}

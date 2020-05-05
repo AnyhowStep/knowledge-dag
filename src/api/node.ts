@@ -5,6 +5,13 @@ import * as mapper from "../mapper";
 import * as apiMapper from "../api-mapper";
 
 export const NodeApi = rc.toAxiosApi({
+    fetchSimple : rd.route()
+        .setMethod("GET")
+        .append("/node")
+        .appendParam(mapper.nodeId)
+        .append("/simple")
+        .setResponse(apiMapper.nodeSimple),
+
     fetchDetailed : rd.route()
         .setMethod("GET")
         .append("/node")
@@ -42,6 +49,8 @@ export const NodeApi = rc.toAxiosApi({
                 tm.array(tm.mysql.varChar(3, 255)).withName("title").optional(),
                 tm.array(tm.mysql.varChar(3, 255)).withName("tag").optional(),
                 tm.array(tm.mysql.varChar(3, 255)).withName("keyword").optional(),
+
+                tm.array(tm.mysql.varChar(3, 255)).withName("tagExact").optional(),
             )),
         apiMapper.nodeSimple
     ),

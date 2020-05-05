@@ -3,6 +3,21 @@ import {NodeApi} from "../api";
 import * as dao from "../dao";
 
 export const initNode : RouteInitDelegate = ({app, pool}) => {
+    app.createRoute(NodeApi.routes.fetchSimple)
+        .asyncVoidHandler((req, res) => pool
+            .acquireReadOnlyTransaction(connection => dao.node
+                .simpleQuery()
+                .whereEqPrimaryKey(
+                    tables => tables.node,
+                    req.params
+                )
+                .fetchOne(connection)
+            )
+            .then((data) => {
+                res.json(data);
+            })
+        );
+
     app.createRoute(NodeApi.routes.fetchDetailed)
         .asyncVoidHandler((req, res) => pool
             .acquireReadOnlyTransaction(connection => dao.node

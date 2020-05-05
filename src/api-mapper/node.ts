@@ -10,7 +10,7 @@ export const nodeDetailed = tm.object(
         m.edit.description,
         m.edit.content,
         m.edit.createdAt,
-    ).withName("latestVersion"),
+    ).withName("latestEdit"),
 
     tm.array(m.tag.title).withName("tags"),
 
@@ -44,7 +44,7 @@ export const nodeSimple = tm.object(
     tm.object(
         m.edit.title,
         m.edit.description,
-    ).withName("latestVersion"),
+    ).withName("latestEdit"),
 
     tm.array(m.tag.title).withName("tags"),
 );

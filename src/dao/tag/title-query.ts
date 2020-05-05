@@ -5,7 +5,7 @@ export function titleQuery () {
     return sql
         .from(table.tag)
         .orderBy(columns => [
-            columns.title.desc(),
+            columns.title.asc(),
         ])
         .select(columns => [
             columns.title,

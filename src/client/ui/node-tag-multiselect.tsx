@@ -7,6 +7,7 @@ import {NodeTagUtil} from "./util/node-tag-util";
 import {api} from "../api";
 
 export interface NodeTagMultiselectProps {
+    readonly readOnly? : boolean,
     readonly values : readonly string[],
     readonly setValues : (newValues : readonly string[]) => void,
 }
@@ -21,6 +22,7 @@ export function NodeTagMultiselect (props : NodeTagMultiselectProps) {
     return (
         <div>
             <selectize.MultiSelect
+                disabled={props.readOnly}
                 options={options}
                 search={search}
                 style={{
@@ -69,13 +71,14 @@ export function NodeTagMultiselect (props : NodeTagMultiselectProps) {
                     }
                 }}
                 onSearchChange={(search) => {
-                    const title = search
-                        .split(/\s+/g)
-                        .map(NodeTagUtil.ToTitle)
-                        .filter(s => s.length >= 3);
                     setSearch(search);
                     const timer = setTimeout(
                         () => {
+                            const title = search
+                                .split(/\s+/g)
+                                .map(NodeTagUtil.ToTitle)
+                                .filter(s => s.length >= 3);
+
                             api.tag.paginate()
                                 .setQuery({
                                     title,
@@ -97,7 +100,7 @@ export function NodeTagMultiselect (props : NodeTagMultiselectProps) {
                                     } else {
                                         error.push("negative", err.response.data.error);
                                     }
-                                })
+                                });
                         },
                         1000
                     );

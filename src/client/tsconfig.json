@@ -7,7 +7,9 @@
         "lib": ["DOM", "ES2016"]
     },
     "references" : [
-        { "path": "../api" }
+        { "path": "../api-mapper" },
+        { "path": "../api" },
+        { "path": "../flavormark" }
     ],
     "include" : [
         "./**/*.ts",

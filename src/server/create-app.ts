@@ -205,6 +205,7 @@ export async function createApp (args : CreateAppArgs) : Promise<CreateAppResult
     initRoute({
         app,
         pool,
+        accessToken : args.accessToken,
     });
 
     app.use(catchErrorMiddleware);

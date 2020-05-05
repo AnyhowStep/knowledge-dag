@@ -7,12 +7,14 @@ import * as apiHandler from "../../api-handler";
 export interface RouteInitArgs {
     readonly pool : sql.IPool;
     readonly app : express.IMainApp<{ locals : {} }>;
+    readonly accessToken : string;
 }
 
-export function initRoute ({ pool, app } : RouteInitArgs) {
+export function initRoute ({ pool, app, accessToken } : RouteInitArgs) {
     apiHandler.init({
         app,
         pool,
+        accessToken,
     });
 
     app.use(

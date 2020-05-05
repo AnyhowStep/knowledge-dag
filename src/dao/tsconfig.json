@@ -6,7 +6,8 @@
         "types": []
     },
     "references" : [
-        { "path": "../table" }
+        { "path": "../table" },
+        { "path": "../dag" }
     ],
     "include" : [
         "./**/*.ts"

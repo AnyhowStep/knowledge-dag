@@ -11,6 +11,7 @@
         { "path" : "src/api-mapper" },
         { "path" : "src/api" },
         { "path" : "src/api-handler" },
+        { "path" : "src/flavormark" },
         { "path" : "src/client" },
         { "path" : "src/server" },
         { "path" : "src/server-main" }

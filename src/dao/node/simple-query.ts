@@ -15,7 +15,7 @@ export function simpleQuery () {
             columns.depth,
         ])
         .map(async (row, connection) => {
-            const latestVersion = await sql.LogUtil
+            const latestEdit = await sql.LogUtil
                 .latestByPrimaryKey(
                     table.editLog,
                     row.node
@@ -43,7 +43,7 @@ export function simpleQuery () {
 
             return {
                 ...row.node,
-                latestVersion,
+                latestEdit,
                 tags,
             };
         });

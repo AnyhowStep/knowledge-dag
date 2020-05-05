@@ -13,7 +13,7 @@ export function DefaultMenu (props : DefaultMenuProps) {
             if (/^\s*$/.test(searchInput)) {
                 return;
             }
-            history.push(`/node?keyword=${encodeURIComponent(searchInput)}`);
+            history.push(`/node?search=${encodeURIComponent(searchInput)}`);
         };
 
         return (

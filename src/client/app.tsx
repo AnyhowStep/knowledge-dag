@@ -32,6 +32,7 @@ export function App (_props : Props) {
                 <div className="item">
                     Links
                     <div className="menu">
+                        <Link className="ui item" to={`/node`}>Nodes</Link>
                         <Link className="ui item" to={`/tag`}>Tags</Link>
                         <Link className="ui item" to={`/graph`}>Graph</Link>
                     </div>
@@ -46,9 +47,17 @@ export function App (_props : Props) {
                 />
                 <Switch>
                     <Route path="/node/create" component={r.node.Create}/>
-                    <Route path="/node/:nodeId(\d+)/update" component={r.NotImplemented}/>
-                    <Route path="/node/:nodeId(\d+)" component={r.NotImplemented}/>
-                    <Route path="/tag" component={r.NotImplemented}/>
+                    <Route path="/node/:nodeId(\d+)/update" component={r.node.Update}/>
+                    <Route path="/node/:nodeId(\d+)/delete" component={r.node.Delete}/>
+                    <Route path="/node/:nodeId(\d+)/dependency/create" component={r.dependency.Create}/>
+                    <Route path="/node/:nodeId(\d+)/dependency/:parentId(\d+)/delete" component={r.dependency.Delete}/>
+                    <Route path="/node/:nodeId(\d+)" component={r.node.Fetch}/>
+                    <Route path="/node" component={r.node.Paginate}/>
+
+                    <Route path="/tag/:tagId(\d+)/update" component={r.tag.Update}/>
+                    <Route path="/tag/:tagId(\d+)/delete" component={r.tag.Delete}/>
+                    <Route path="/tag" component={r.tag.Paginate}/>
+
                     <Route path="/graph" component={r.NotImplemented}/>
                     <Route path="/access-token" component={r.AccessToken}/>
 

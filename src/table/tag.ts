@@ -9,4 +9,7 @@ export const tag = sql.table("tag")
     ])
     .addExplicitDefaultValue(columns => [
         columns.createdAt
+    ])
+    .addMutable(columns => [
+        columns.title,
     ]);

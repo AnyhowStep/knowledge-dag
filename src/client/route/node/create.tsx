@@ -98,13 +98,13 @@ export const Create = (props : CreateProps) => {
                         />
                     </div>
                 </div>
-                    <div className="field">
-                        <label>Tags</label>
-                        <NodeTagMultiselect
-                            values={tags}
-                            setValues={setTags}
-                        />
-                    </div>
+                <div className="field">
+                    <label>Tags</label>
+                    <NodeTagMultiselect
+                        values={tags}
+                        setValues={setTags}
+                    />
+                </div>
                 <textarea
                     placeholder="Content"
                     style={{

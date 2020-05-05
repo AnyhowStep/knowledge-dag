@@ -14,7 +14,7 @@ export function detailedQuery () {
             columns.createdAt,
         ])
         .map(async (row, connection) => {
-            const latestVersion = await sql.LogUtil
+            const latestEdit = await sql.LogUtil
                 .latestByPrimaryKey(
                     table.editLog,
                     row.node
@@ -55,7 +55,7 @@ export function detailedQuery () {
                     )
                 )
                 .orderBy(columns => [
-                    columns.parent.depth.asc(),
+                    columns.parent.depth.desc(),
                 ])
                 .select(columns => [
                     columns.dependency.parentId,
@@ -130,7 +130,7 @@ export function detailedQuery () {
 
             return {
                 ...row.node,
-                latestVersion,
+                latestEdit,
                 tags,
                 dependencies,
                 dependents,

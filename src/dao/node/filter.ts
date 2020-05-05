@@ -32,10 +32,31 @@ function tagLike (tag : string) {
     );
 }
 
+function tagEqual (tag : string) {
+    return sql.exists(
+        sql.requireOuterQueryJoins(table.node)
+            .from(table.nodeTag)
+            .whereEqOuterQueryPrimaryKey(
+                tables => tables.nodeTag,
+                tables => tables.node
+            )
+            .innerJoinUsingPrimaryKey(
+                tables => tables.nodeTag,
+                table.tag
+            )
+            .where(columns => sql.eq(
+                columns.tag.title,
+                tag
+            ))
+    );
+}
+
 export function filter (args : {
     title? : string[],
     tag? : string[],
     keyword? : string[],
+
+    tagExact? : string[],
 }) {
     /**
      * We `.slice(0, 5)` as a naive attempt at preventing DoS through querying
@@ -58,6 +79,11 @@ export function filter (args : {
                 titleLike(keyword),
                 tagLike(keyword)
             ))
+        ),
+        ...(
+            args.tagExact == undefined ?
+            [true] :
+            args.tagExact.slice(0, 5).map(tagExact => tagEqual(tagExact))
         ),
     );
 }

@@ -25,7 +25,14 @@ const rules : webpack.RuleSetRule[] = [
             transpileOnly : true,
         },
         exclude : /node_modules/,
-    }
+    },
+    {
+        test: /\.(png)$/,
+        loaders: [
+            "url-loader?limit=10000",
+            "img-loader"
+        ],
+    },
 ];
 //TODO Is this even needed?
 if (process.env.WEBPACK_MODE === "development") {
