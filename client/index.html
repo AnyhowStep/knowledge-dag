@@ -5,6 +5,36 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <link rel="stylesheet" href="/semantic.min.css"/>
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({
+                jax: ["input/TeX","input/MathML","input/AsciiMath","output/CommonHTML","output/SVG"],
+                extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "a11y/accessibility-menu.js"],
+                TeX: {
+                    extensions: ["cancel.js", "color.js", "AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"],
+                    Macros : {
+                        "tuple": ["\\langle #1 \\rangle", 1],
+                        "ordered": ["\\langle #1 \\rangle", 1],
+                    },
+                },
+                skipStartupTypeset: true,
+                SVG : {
+                    useGlobalCache : false,
+                    scale : 200,
+                },
+                styles: {
+                    ".MathJax_SVG svg > g, .MathJax_SVG_Display svg > g": {
+                        fill: "#FFF",
+                        stroke: "#FFF"
+                    }
+                },
+            });
+        </script>
+        <script
+            async
+            type="text/javascript"
+            src="/MathJax/MathJax.js"
+        >
+        </script>
         <style>
             code {
                 padding: .2rem .4rem;

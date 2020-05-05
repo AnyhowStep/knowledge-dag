@@ -3,3 +3,4 @@ dist
 development.env
 client-config.json
 .vscode/settings.json
+client/MathJax

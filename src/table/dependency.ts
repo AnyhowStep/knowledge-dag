@@ -6,4 +6,7 @@ export const dependency = sql.table("dependency")
     .setPrimaryKey(columns => [
         columns.nodeId,
         columns.parentId,
+    ])
+    .addMutable(columns => [
+        columns.direct,
     ]);

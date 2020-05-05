@@ -6,4 +6,7 @@ export const node = sql.table("node")
     .setAutoIncrement(columns => columns.nodeId)
     .addExplicitDefaultValue(columns => [
         columns.createdAt
+    ])
+    .addMutable(columns => [
+        columns.depth,
     ]);

@@ -1,13 +1,13 @@
 {
     "extends" : "../../tsconfig-base.json",
     "compilerOptions": {
-        "outDir": "../../dist/server",
-        "declarationDir": "../../dist/server",
+        "outDir": "../../dist/graph-computation",
+        "declarationDir": "../../dist/graph-computation",
         "types": []
     },
     "references" : [
-        { "path": "../api-handler" },
-        { "path": "../graph-computation" }
+        { "path": "../table" },
+        { "path": "../dag" }
     ],
     "include" : [
         "./**/*.ts"

@@ -7,11 +7,13 @@
         { "path" : "src/dag" },
         { "path" : "src/mapper" },
         { "path" : "src/table" },
+        { "path" : "src/dao" },
         { "path" : "src/route-declaration" },
         { "path" : "src/api-mapper" },
         { "path" : "src/api" },
         { "path" : "src/api-handler" },
         { "path" : "src/flavormark" },
+        { "path" : "src/graph-computation" },
         { "path" : "src/client" },
         { "path" : "src/server" },
         { "path" : "src/server-main" }

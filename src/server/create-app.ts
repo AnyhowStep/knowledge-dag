@@ -4,6 +4,7 @@ import * as mysql from "@squill/mysql-5.7";
 import * as express from "route-express";
 import * as table from "../table";
 import {initRoute} from "./route-handler";
+import {initGraphComputation} from "../graph-computation";
 
 export interface CreateAppArgs {
     readonly mysql : {
@@ -19,6 +20,7 @@ export interface CreateAppArgs {
 export interface CreateAppResult {
     readonly pool : sql.IPool;
     readonly app : express.IMainApp<{ locals : {} }>;
+    readonly graphComputationQueue : sql.AsyncQueue<void>;
 }
 
 function mappingErrorToJsonApiErrorArrayImpl (
@@ -210,8 +212,20 @@ export async function createApp (args : CreateAppArgs) : Promise<CreateAppResult
 
     app.use(catchErrorMiddleware);
 
+    const graphComputationQueue = initGraphComputation({
+        pool,
+        onCompute : () => {
+            console.log("Computed graph");
+        },
+        onComputeError : (err) => {
+            console.error("Could not compute graph");
+            console.error(err);
+        },
+    });
+
     return {
         pool,
         app,
+        graphComputationQueue,
     };
 }

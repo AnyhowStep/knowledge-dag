@@ -352,7 +352,7 @@ export class Argument extends Component<ArgumentProps, ArgumentState> {
                                 return;
                             }
                             if (i+1 >= minDependant(inferences, i)) {
-                                if (!confirm("Go below dependant?")) {
+                                if (!confirm("Go below dependent?")) {
                                     return;
                                 }
                             }
@@ -365,7 +365,7 @@ export class Argument extends Component<ArgumentProps, ArgumentState> {
                         </button>
                         <button className="ui icon huge button" onClick={() => {
                             const warning = hasDependants(inferences, i) ?
-                                "This inference has dependants" :
+                                "This inference has dependents" :
                                 "";
                             if (confirm(`Delete? ${warning}`)) {
                                 editOptions.onUpdate(deleteInference(inferences, i));
@@ -409,7 +409,7 @@ export class Argument extends Component<ArgumentProps, ArgumentState> {
                             ) ?
                                 undefined :
                                 <div>
-                                    <span className="ui red label">This inference has no dependants</span>
+                                    <span className="ui red label">This inference has no dependents</span>
                                 </div>
                         }
                         {
@@ -457,7 +457,7 @@ export class Argument extends Component<ArgumentProps, ArgumentState> {
                             ) ?
                                 undefined :
                                 <div>
-                                    <span className="ui red label">This inference has no dependants</span>
+                                    <span className="ui red label">This inference has no dependents</span>
                                 </div>
                         }
                         {
