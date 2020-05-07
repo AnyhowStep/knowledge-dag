@@ -6,5 +6,8 @@ export const storage = {
     },
     setAccessToken (value : string) {
         localStorage.setItem(ACCESS_TOKEN_KEY, value);
+    },
+    unsetAccessToken () {
+        localStorage.removeItem(ACCESS_TOKEN_KEY);
     }
 };

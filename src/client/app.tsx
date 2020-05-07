@@ -42,9 +42,15 @@ export function App (_props : Props) {
                         }
                     </div>
                 </div>
-                <Link className="item" to="/access-token">
-                    Access Token
-                </Link>
+                {
+                    storage.getAccessToken() == undefined ?
+                    <Link className="item" to="/access-token">
+                        Access Token
+                    </Link> :
+                    <Link className="item" to="/log-out">
+                        Log Out
+                    </Link>
+                }
             </div>
             <div className="pusher" style={{height:"100%"}}>
                 <DefaultMenu
@@ -65,6 +71,7 @@ export function App (_props : Props) {
 
                     <Route path="/graph" component={r.graph.Graph}/>
                     <Route path="/access-token" component={r.AccessToken}/>
+                    <Route path="/log-out" component={r.LogOut}/>
                     <Route path="/markdown-help" component={r.NotImplemented}/>
 
                     <Route path="/" component={r.HomePage}/>
