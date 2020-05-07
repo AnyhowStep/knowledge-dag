@@ -1,3 +1,4 @@
+import * as sql from "@squill/squill";
 import {RouteInitDelegate} from "./route-init-delegate";
 import {TagApi} from "../api";
 import * as dao from "../dao";
@@ -5,13 +6,15 @@ import * as dao from "../dao";
 export const initTag : RouteInitDelegate = ({app, pool}) => {
     app.createRoute(TagApi.routes.fetchWithCount)
         .asyncVoidHandler((req, res) => pool
-            .acquireReadOnlyTransaction(connection => dao.tag
-                .withCountQuery()
-                .whereEqPrimaryKey(
-                    tables => tables.tag,
-                    req.params
-                )
-                .fetchOne(connection)
+            .acquireReadOnlyTransaction(
+                sql.IsolationLevel.REPEATABLE_READ,
+                connection => dao.tag
+                    .withCountQuery()
+                    .whereEqPrimaryKey(
+                        tables => tables.tag,
+                        req.params
+                    )
+                    .fetchOne(connection)
             )
             .then((data) => {
                 res.json(data);
@@ -49,10 +52,12 @@ export const initTag : RouteInitDelegate = ({app, pool}) => {
 
     app.createRoute(TagApi.routes.paginate)
         .asyncVoidHandler((req, res) => pool
-            .acquireReadOnlyTransaction(connection => dao.tag
-                .titleQuery()
-                .where(() => dao.tag.filter(req.query))
-                .paginate(connection, req.query)
+            .acquireReadOnlyTransaction(
+                sql.IsolationLevel.REPEATABLE_READ,
+                connection => dao.tag
+                    .titleQuery()
+                    .where(() => dao.tag.filter(req.query))
+                    .paginate(connection, req.query)
             )
             .then((data) => {
                 res.json(data);
@@ -61,10 +66,12 @@ export const initTag : RouteInitDelegate = ({app, pool}) => {
 
     app.createRoute(TagApi.routes.paginateWithCount)
         .asyncVoidHandler((req, res) => pool
-            .acquireReadOnlyTransaction(connection => dao.tag
-                .withCountQuery()
-                .where(() => dao.tag.filter(req.query))
-                .paginate(connection, req.query)
+            .acquireReadOnlyTransaction(
+                sql.IsolationLevel.REPEATABLE_READ,
+                connection => dao.tag
+                    .withCountQuery()
+                    .where(() => dao.tag.filter(req.query))
+                    .paginate(connection, req.query)
             )
             .then((data) => {
                 res.json(data);

@@ -34,14 +34,19 @@ export function App (_props : Props) {
                     <div className="menu">
                         <Link className="ui item" to={`/node`}>Nodes</Link>
                         <Link className="ui item" to={`/tag`}>Tags</Link>
-                        <Link className="ui item" to={`/graph`}>Graph</Link>
+                        <Link className="ui item" to={`/graph?random=true`}>Graph</Link>
+                        {
+                            storage.getAccessToken() == undefined ?
+                            undefined :
+                            <Link className="ui item" to={`/markdown-help`}>Markdown Help</Link>
+                        }
                     </div>
                 </div>
                 <Link className="item" to="/access-token">
                     Access Token
                 </Link>
             </div>
-            <div className="pusher" style={{minHeight:"100%"}}>
+            <div className="pusher" style={{height:"100%"}}>
                 <DefaultMenu
                     sidebarHook={sidebar}
                 />
@@ -58,22 +63,12 @@ export function App (_props : Props) {
                     <Route path="/tag/:tagId(\d+)/delete" component={r.tag.Delete}/>
                     <Route path="/tag" component={r.tag.Paginate}/>
 
-                    <Route path="/graph" component={r.NotImplemented}/>
+                    <Route path="/graph" component={r.graph.Graph}/>
                     <Route path="/access-token" component={r.AccessToken}/>
+                    <Route path="/markdown-help" component={r.NotImplemented}/>
 
                     <Route path="/" component={r.HomePage}/>
                 </Switch>
-                <div className="ui vertical footer segment">
-                    <div className="ui center aligned container">
-                        <div className="ui stackable grid">
-                            <div className="sixteen wide column">
-                                <h4 className="ui header">Made with <i className="heart icon"></i></h4>
-                                <p>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </BrowserRouter>
     );

@@ -5,7 +5,9 @@ export interface ErrorMessageProps {
     error : {
         messages : (string|{message:string, link:string})[],
         type : "warning"|"negative",
-    }
+    },
+    style? : React.CSSProperties,
+    onCloseClick? : () => void,
 }
 export function ErrorMessage (props : ErrorMessageProps) {
     const {error} = props;
@@ -14,8 +16,13 @@ export function ErrorMessage (props : ErrorMessageProps) {
         return <div className="ui hidden message"></div>;
     } else {
         return (
-            <div className={"ui icon message " + error.type}>
+            <div className={"ui icon message " + error.type} style={props.style}>
                 <i className="exclamation triangle icon"></i>
+                {
+                    props.onCloseClick == undefined ?
+                    undefined :
+                    <i className="close icon" onClick={props.onCloseClick}></i>
+                }
                 <div className="content">
                     <div className="header">{error.type == "warning" ? "Warning" : "Error"}</div>
                     <ul className="list">

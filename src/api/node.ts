@@ -8,16 +8,23 @@ export const NodeApi = rc.toAxiosApi({
     fetchSimple : rd.route()
         .setMethod("GET")
         .append("/node")
-        .appendParam(mapper.nodeId)
+        .appendParam(mapper.nodeId, /\d+/)
         .append("/simple")
         .setResponse(apiMapper.nodeSimple),
 
     fetchDetailed : rd.route()
         .setMethod("GET")
         .append("/node")
-        .appendParam(mapper.nodeId)
+        .appendParam(mapper.nodeId, /\d+/)
         .append("/detailed")
         .setResponse(apiMapper.nodeDetailed),
+
+    fetchRandomSimple : rd.route()
+        .setMethod("GET")
+        .append("/node")
+        .append("/random")
+        .append("/simple")
+        .setResponse(apiMapper.nodeSimple),
 
     create : rd.route()
         .setMethod("POST")
@@ -31,14 +38,14 @@ export const NodeApi = rc.toAxiosApi({
     update : rd.route()
         .setMethod("PUT")
         .append("/node")
-        .appendParam(mapper.nodeId)
+        .appendParam(mapper.nodeId, /\d+/)
         .setHeader(apiMapper.auth)
         .setBody(apiMapper.updateNodeBody),
 
     delete : rd.route()
         .setMethod("DELETE")
         .append("/node")
-        .appendParam(mapper.nodeId)
+        .appendParam(mapper.nodeId, /\d+/)
         .setHeader(apiMapper.auth),
 
     paginate : rd.paginate(

@@ -26,58 +26,61 @@ export async function create (
     /**
      * @todo recalculate graph
      */
-    return connection.transactionIfNotInOne(async (connection) => {
-        const {nodeId, parentId} = args;
+    return connection.transactionIfNotInOne(
+        sql.IsolationLevel.REPEATABLE_READ,
+        async (connection) => {
+            const {nodeId, parentId} = args;
 
-        await table.node
-            .whereEqPrimaryKey({nodeId})
-            .assertExists(connection);
+            await table.node
+                .whereEqPrimaryKey({nodeId})
+                .assertExists(connection);
 
-        await table.node
-            .whereEqPrimaryKey({nodeId : parentId})
-            .assertExists(connection);
+            await table.node
+                .whereEqPrimaryKey({nodeId : parentId})
+                .assertExists(connection);
 
-        /**
-         * If a path exists from the parent to the node,
-         * Then we're trying to insert an edge that will create a cycle
-         */
-        const pathToAncestor = await findPathToAncestor({
-            from : args.parentId.toString(),
-            to : args.nodeId.toString(),
-            fetchAllParent : (nodeId) => {
-                return sql.from(table.dependency)
-                    .where(columns =>
-                        sql.eq(columns.nodeId, bigIntLib.BigInt(nodeId))
-                    )
-                    .selectValue(columns => columns.parentId)
-                    .fetchValueArray(connection)
-                    .then((parentIds) => parentIds.map(parentId => parentId.toString()));
-            },
-        });
-        if (pathToAncestor != undefined) {
-            throw new NodeParentInsertError(
-                `A path from ${args.parentId} to ${args.nodeId} exists, adding ${args.nodeId}->${args.parentId} would create a cycle`,
-                pathToAncestor
+            /**
+             * If a path exists from the parent to the node,
+             * Then we're trying to insert an edge that will create a cycle
+             */
+            const pathToAncestor = await findPathToAncestor({
+                from : args.parentId.toString(),
+                to : args.nodeId.toString(),
+                fetchAllParent : (nodeId) => {
+                    return sql.from(table.dependency)
+                        .where(columns =>
+                            sql.eq(columns.nodeId, bigIntLib.BigInt(nodeId))
+                        )
+                        .selectValue(columns => columns.parentId)
+                        .fetchValueArray(connection)
+                        .then((parentIds) => parentIds.map(parentId => parentId.toString()));
+                },
+            });
+            if (pathToAncestor != undefined) {
+                throw new NodeParentInsertError(
+                    `A path from ${args.parentId} to ${args.nodeId} exists, adding ${args.nodeId}->${args.parentId} would create a cycle`,
+                    pathToAncestor
+                );
+            }
+
+            await table.dependency.insertOne(
+                connection,
+                {
+                    nodeId,
+                    parentId,
+                    /**
+                     * Assume direct for now.
+                     */
+                    direct : true,
+                }
+            );
+
+            await table.dirtyNode.replaceOne(
+                connection,
+                {
+                    nodeId
+                }
             );
         }
-
-        await table.dependency.insertOne(
-            connection,
-            {
-                nodeId,
-                parentId,
-                /**
-                 * Assume direct for now.
-                 */
-                direct : true,
-            }
-        );
-
-        await table.dirtyNode.replaceOne(
-            connection,
-            {
-                nodeId
-            }
-        );
-    });
+    );
 }

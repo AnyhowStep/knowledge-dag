@@ -8,21 +8,21 @@ export const TagApi = rc.toAxiosApi({
     fetchWithCount : rd.route()
         .setMethod("GET")
         .append("/tag")
-        .appendParam(mapper.tagId)
+        .appendParam(mapper.tagId, /\d+/)
         .append("/with-count")
         .setResponse(apiMapper.tagWithCount),
 
     update : rd.route()
         .setMethod("PUT")
         .append("/tag")
-        .appendParam(mapper.tagId)
+        .appendParam(mapper.tagId, /\d+/)
         .setHeader(apiMapper.auth)
         .setBody(apiMapper.updateTagBody),
 
     delete : rd.route()
         .setMethod("DELETE")
         .append("/tag")
-        .appendParam(mapper.tagId)
+        .appendParam(mapper.tagId, /\d+/)
         .setHeader(apiMapper.auth),
 
     paginate : rd.paginate(

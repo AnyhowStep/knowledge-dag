@@ -3,7 +3,7 @@
     "compilerOptions": {
         "outDir": "../../dist/graph-computation",
         "declarationDir": "../../dist/graph-computation",
-        "types": []
+        "types": ["@types/node"]
     },
     "references" : [
         { "path": "../table" },
