@@ -32,7 +32,7 @@ export const Fetch = (props : FetchProps) => {
                     if (cancelled) {
                         return;
                     }
-                    setNode(response.responseBody)
+                    setNode(response.responseBody);
                     error.reset();
                 })
                 .catch((err) => {
@@ -40,10 +40,10 @@ export const Fetch = (props : FetchProps) => {
                         return;
                     }
                     error.push("negative", err.message);
-                })
+                });
             return () => {
                 cancelled = true;
-            }
+            };
         },
         [props.match.params.nodeId]
     );

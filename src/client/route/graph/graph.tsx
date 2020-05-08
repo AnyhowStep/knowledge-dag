@@ -305,6 +305,44 @@ export function Graph (props : RouteComponentProps<{}>) {
                 ref={renderElement}
             >
             </div>
+            <div
+                className={"ui simple dropdown item button"}
+                style={{
+                    position : "fixed",
+                    top : "70px",
+                    left : "5px",
+                    textAlign : "left",
+                }}
+            >
+                Options
+                <i className="dropdown icon"></i>
+                <div className="menu">
+                    <button
+                        className="ui item"
+                        onClick={() => {
+                            const search = QueryUtil.mutateSearch(
+                                props.location.search,
+                                {
+                                    update : {
+                                        showExplorationUi : (
+                                            showExplorationUi ?
+                                            undefined :
+                                            "true"
+                                        ),
+                                    }
+                                }
+                            );
+                            props.history.replace(`${props.location.pathname}${search}`);
+                        }}
+                    >
+                        {
+                            showExplorationUi ?
+                            "Hide Exploration UI" :
+                            "Show Exploration UI"
+                        }
+                    </button>
+                </div>
+            </div>
             {
                 (showExplorationUi && selectedNodeId != undefined) ?
                 <span style={{
@@ -419,11 +457,18 @@ export function Graph (props : RouteComponentProps<{}>) {
                     >
                         Recursive
                     </button>
-                    {/*
-                    <ui.Button onClick={this.loadSubClick}>Child</ui.Button>
-                    <ui.Button onClick={this.loadRecursiveClick}>Both</ui.Button>
-                    <ui.Button onClick={this.focus}>Focus</ui.Button>
-                    */}
+                    {
+                        network == undefined ?
+                        undefined :
+                        <button
+                            className="ui button"
+                            onClick={async () => {
+                                network.focus(selectedNodeId.toString(), { animation : true });
+                            }}
+                        >
+                            Focus
+                        </button>
+                    }
                 </span> :
                 undefined
             }
