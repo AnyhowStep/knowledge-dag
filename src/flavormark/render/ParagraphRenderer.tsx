@@ -7,6 +7,13 @@ export class ParagraphRenderer extends ReactSubRenderer<fm.CommonMark.Block.Para
         super(fm.CommonMark.Block.ParagraphNode);
     }
     public render (node : fm.CommonMark.Block.ParagraphNode, children : React.ReactNode[]) : React.ReactNode {
-        return <p key={node.stringContent}>{children}</p>;
+        return (
+            <div
+                key={JSON.stringify(node.sourceRange)}
+                className="md-paragraph"
+            >
+                {children}
+            </div>
+        );
     }
 }

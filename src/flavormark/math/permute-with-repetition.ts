@@ -8,7 +8,7 @@ export function permuteWithRepetition<T> (values : T[], n : number) : T[][] {
 
     for (let col=0; col<n; ++col) {
         const mod = rowCount / Math.pow(values.length, col+1);
-        console.log(rowCount, values.length, col, Math.pow(values.length, col));
+        //console.log(rowCount, values.length, col, Math.pow(values.length, col));
         let valueIndex = -1;
         for (let row=0; row<rowCount; ++row) {
             if (row % mod == 0) {

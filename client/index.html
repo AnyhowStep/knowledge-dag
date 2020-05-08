@@ -35,6 +35,16 @@
             src="/MathJax/MathJax.js"
         >
         </script>
+
+
+        <script src="/hljs-typescript.js">
+        </script>
+        <link rel="stylesheet" href="/highlight/styles/default.css"/>
+        <script src="/highlight/highlight.pack.js">
+        </script>
+        <script src="/highlightjs-line-numbers.min.js">
+        </script>
+
         <style>
             code {
                 padding: .2rem .4rem;
@@ -43,9 +53,14 @@
                 background-color: #f7f7f9;
                 border-radius: .25rem;
             }
+            pre {
+                background-color : #eeeeee;
+                overflow-x: auto;
+                overflow-y: hidden;
+            }
             pre code {
                 color : inherit;
-                background-color : transparent;
+                background-color : #eeeeee;
             }
             blockquote {
                 padding: .5rem 1rem;
@@ -53,6 +68,7 @@
                 font-size: 1.25rem;
                 border-left: .25rem solid #eceeef;
                 background-color: #f8f8fa;
+                margin-inline-start: 10px;
             }
             h1 small, h2 small, h3 small, h4 small, h5 small, h6 small, a small {
                 font-weight: normal;
@@ -184,7 +200,13 @@
                 margin-right:0px!important;
                 padding:5px;
             }
+
+            .md-paragraph {
+                margin-block-start: 1em;
+                margin-block-end: 1em;
+            }
         </style>
+        <link rel="stylesheet" href="/highlightjs-line-numbers.css"/>
     </head>
     <body>
         <div id="app" style="height:100%;">

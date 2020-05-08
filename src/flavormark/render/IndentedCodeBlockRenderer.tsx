@@ -8,6 +8,9 @@ export class IndentedCodeBlockRenderer extends ReactSubRenderer<fm.CommonMark.Bl
         super(fm.CommonMark.Block.IndentedCodeBlockNode);
     }
     public render (node : fm.CommonMark.Block.IndentedCodeBlockNode) : React.ReactNode {
-        return <CodeBlock code={node.literal}/>;
+        return <CodeBlock
+            key={"indented-code-block-" + JSON.stringify(node.sourceRange)}
+            code={node.literal}
+        />;
     }
 }

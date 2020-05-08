@@ -1,6 +1,7 @@
 export * from "./access-token";
 export * from "./home-page";
 export * from "./log-out";
+export * from "./markdown-help";
 export * from "./not-implemented";
 
 import * as dependency from "./dependency";

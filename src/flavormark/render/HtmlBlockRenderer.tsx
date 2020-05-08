@@ -8,6 +8,11 @@ export class HtmlBlockRenderer extends ReactSubRenderer<fm.CommonMark.Block.Html
         super(fm.CommonMark.Block.HtmlBlockNode);
     }
     public render (node : fm.CommonMark.Block.HtmlBlockNode) : React.ReactNode {
-        return <HtmlBlock html={node.literal} executeScript={true} block={true}/>;
+        return <HtmlBlock
+            key={JSON.stringify(node.sourceRange)}
+            html={node.literal}
+            executeScript={true}
+            block={true}
+        />;
     }
 }

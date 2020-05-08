@@ -310,10 +310,10 @@ export class TruthTable extends Component<TruthTableProps, TruthTableState> {
     }
     public render () {
         return (
-            <div>
-                <Button onClick={this.toggleSize}>{this.state.contract ? "Expand" : "Contract"}</Button>
+            <div style={{ marginBlockStart : "1em", marginBlockEnd : "1em" }}>
                 {this.renderError()}
                 {this.renderMath()}
+                <Button onClick={this.toggleSize}>{this.state.contract ? "Expand" : "Contract"}</Button>
             </div>
         );
     }

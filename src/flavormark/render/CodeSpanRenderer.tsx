@@ -6,7 +6,9 @@ export class CodeSpanRenderer extends ReactSubRenderer<fm.CommonMark.Inline.Code
     public constructor () {
         super(fm.CommonMark.Inline.CodeSpanNode);
     }
+    private keyHack = 0;
     public render (node : fm.CommonMark.Inline.CodeSpanNode) : React.ReactNode {
-        return <code>{node.literal}</code>;
+        ++this.keyHack;
+        return <code key={"code-" + this.keyHack.toString()}>{node.literal}</code>;
     }
 }

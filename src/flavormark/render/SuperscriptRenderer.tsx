@@ -6,7 +6,13 @@ export class SuperscriptRenderer extends ReactSubRenderer<fm.FlavorMark.Inline.S
     public constructor () {
         super(fm.FlavorMark.Inline.SuperscriptNode);
     }
-    public render (_node : fm.FlavorMark.Inline.SuperscriptNode, children : React.ReactNode[]) : React.ReactNode {
-        return <sup>{children}</sup>;
+    public render (node : fm.FlavorMark.Inline.SuperscriptNode, children : React.ReactNode[]) : React.ReactNode {
+        return (
+            <sup
+                key={"sup-" + JSON.stringify(node.sourceRange)}
+            >
+                {children}
+            </sup>
+        );
     }
 }

@@ -16,6 +16,10 @@ export class FencedCodeBlockRenderer extends ReactSubRenderer<fm.CommonMark.Bloc
         if (info.length > 0 && info[0].length > 0) {
             language = info[0];
         }
-        return <CodeBlock code={node.literal} language={language}/>;
+        return <CodeBlock
+            key={"fenced-code-block-" + JSON.stringify(node.sourceRange)}
+            code={node.literal}
+            language={language}
+        />;
     }
 }

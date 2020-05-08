@@ -7,7 +7,7 @@ export class ImageRenderer extends ReactSubRenderer<fm.CommonMark.Inline.ImageNo
         super(fm.CommonMark.Inline.ImageNode);
     }
     public static GetStringRecursive (children : React.ReactNode[], result : string[] = []) : string[] {
-        for (let c of children) {
+        for (const c of children) {
             if (c == undefined) {
                 continue;
             }
@@ -32,6 +32,12 @@ export class ImageRenderer extends ReactSubRenderer<fm.CommonMark.Inline.ImageNo
     }
     public render (node : fm.CommonMark.Inline.ImageNode, children : React.ReactNode[]) : React.ReactNode {
         const textChildren = ImageRenderer.GetStringRecursive(children);
-        return <img src={node.destination} title={node.title} alt={textChildren.join("")}/>;
+        return (
+            <img
+                key={"img-" + JSON.stringify(node.sourceRange)}
+                src={node.destination}
+                title={node.title}
+                alt={textChildren.join("")}/>
+        );
     }
 }

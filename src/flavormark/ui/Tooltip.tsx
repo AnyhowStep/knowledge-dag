@@ -25,7 +25,7 @@ export class Tooltip extends Component<TooltipProps, TooltipState> {
     }
     public render () {
         return (
-            <div
+            <span
                 onMouseOver={() => {
                     this.setState({
                         mouseOver : true,
@@ -36,12 +36,22 @@ export class Tooltip extends Component<TooltipProps, TooltipState> {
                         mouseOver : false,
                     });
                 }}
+                style={{
+                    display : "inline-block",
+                }}
             >
-                {this.state.content}
-                <div className={this.state.mouseOver ? "" : "hidden"}>
-                    {this.props.children}
-                </div>
-            </div>
+                {this.props.children}
+                <span className={this.state.mouseOver ? "" : "hidden"} style={{
+                    position : "absolute",
+                    backgroundColor : "white",
+                    zIndex : 10,
+                    border : "solid 1px #cccccc",
+                    padding : "5px",
+                    display : "block",
+                }}>
+                    {this.state.content}
+                </span>
+            </span>
         );
     }
 }

@@ -151,10 +151,15 @@ export class PropositionParser {
                 if (result.token.precedence > right.token.precedence) {
                     result.right = right.left;
                     right.left   = result;
+                    return this.parseBinary(right);
+                } else {
+                    result.right = right;
+                    return this.parseBinary(result);
                 }
+            } else {
+                result.right = right;
+                return this.parseBinary(result);
             }
-
-            result.right = right;
             /*
                 //a || b ^ c && d
                 //a
@@ -168,7 +173,6 @@ export class PropositionParser {
                     //b ^ (c && d)
                 //(a || b) ^ (c && d)
             */
-            return this.parseBinary(result);
         } else {
             this.back();
             return left;
@@ -180,7 +184,7 @@ export class PropositionParser {
         }
 
         if (isValue(node.token)) {
-            console.log(node.token.value);
+            //console.log(node.token.value);
             return [node.token.value];
         }
 
@@ -211,7 +215,7 @@ export class PropositionParser {
             let left : string[]|undefined = undefined;
             if (node.left != undefined && isValue(node.left.token) && contract) {
                 left = [node.left.token.value + " " + node.token.value];
-                console.log(left[0]);
+                //console.log(left[0]);
             } else {
                 left  = PropositionParser.FlattenLabels(node.left, contract);
                 left.push(node.token.value);
@@ -220,7 +224,7 @@ export class PropositionParser {
             if (node.right != undefined && isValue(node.right.token) && contract) {
                 const lastIndex = left.length-1;
                 left[lastIndex] += " " + node.right.token.value;
-                console.log(left[lastIndex]);
+                //console.log(left[lastIndex]);
             } else {
                 const right = PropositionParser.FlattenLabels(node.right, contract);
                 left.push(...right);

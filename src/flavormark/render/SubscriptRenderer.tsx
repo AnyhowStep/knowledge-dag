@@ -6,7 +6,13 @@ export class SubscriptRenderer extends ReactSubRenderer<fm.FlavorMark.Inline.Sub
     public constructor () {
         super(fm.FlavorMark.Inline.SubscriptNode);
     }
-    public render (_node : fm.FlavorMark.Inline.SubscriptNode, children : React.ReactNode[]) : React.ReactNode {
-        return <sub>{children}</sub>;
+    public render (node : fm.FlavorMark.Inline.SubscriptNode, children : React.ReactNode[]) : React.ReactNode {
+        return (
+            <sub
+                key={"sub-" + JSON.stringify(node.sourceRange)}
+            >
+                {children}
+            </sub>
+        );
     }
 }

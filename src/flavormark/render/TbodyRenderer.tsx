@@ -6,7 +6,7 @@ export class TbodyRenderer extends ReactSubRenderer<fm.Gfm.Block.TbodyNode> {
     public constructor () {
         super(fm.Gfm.Block.TbodyNode);
     }
-    public render (_node : fm.Gfm.Block.TbodyNode, children : React.ReactNode[]) : React.ReactNode {
-        return <tbody>{children}</tbody>;
+    public render (node : fm.Gfm.Block.TbodyNode, children : React.ReactNode[]) : React.ReactNode {
+        return <tbody key={"tbody-"+JSON.stringify(node.sourceRange)}>{children}</tbody>;
     }
 }

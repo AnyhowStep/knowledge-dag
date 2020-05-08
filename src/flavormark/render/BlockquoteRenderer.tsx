@@ -6,7 +6,13 @@ export class BlockquoteRenderer extends ReactSubRenderer<fm.CommonMark.Block.Blo
     public constructor () {
         super(fm.CommonMark.Block.BlockquoteNode);
     }
-    public render (_node : fm.CommonMark.Block.BlockquoteNode, children : React.ReactNode[]) : React.ReactNode {
-        return <blockquote>{children}</blockquote>;
+    public render (node : fm.CommonMark.Block.BlockquoteNode, children : React.ReactNode[]) : React.ReactNode {
+        return (
+            <blockquote
+                key={"blockquote-" + JSON.stringify(node.sourceRange)}
+            >
+                {children}
+            </blockquote>
+        );
     }
 }

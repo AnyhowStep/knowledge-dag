@@ -8,10 +8,12 @@ export class CheckboxRenderer extends ReactSubRenderer<fm.Gfm.Inline.CheckboxNod
     }
     public render (node : fm.Gfm.Inline.CheckboxNode) : React.ReactNode {
         return (
-            <div className="ui fitted checkbox">
-                <input type="checkbox" disabled={true} checked={node.checked}/>
-                <label></label>
-            </div>
+            <input
+                key={"checkbox-" + JSON.stringify(node.sourceRange)}
+                type="checkbox"
+                disabled={true}
+                checked={node.checked}
+            />
         );
     }
 }

@@ -18,6 +18,7 @@ function toColumns (str : string) {
     const parts : string[] = [];
     let escaped = false;
     let curPart = undefined;
+    //eslint-disable-next-line @typescript-eslint/prefer-for-of
     for (let i=0; i<str.length; ++i) {
         if (str[i] == "\\") {
             escaped = true;
@@ -69,7 +70,7 @@ export class ArgumentRenderer extends ReactSubRenderer<ArgumentNode> {
     }
     public render (node : ArgumentNode) : React.ReactNode {
         const inferences : Inference[] = [];
-        for (let raw of node.rawInferences) {
+        for (const raw of node.rawInferences) {
             const columns = toColumns(raw);
             const math         : string = (columns.length > 0) ? columns[0] : "";
             const description  : string = (columns.length > 1) ? columns[1] : "";
@@ -88,6 +89,6 @@ export class ArgumentRenderer extends ReactSubRenderer<ArgumentNode> {
                 dependsOn   : dependsOn,
             });
         }
-        return <Argument inferences={inferences}/>;
+        return <Argument inferences={inferences} key={JSON.stringify(node.sourceRange)}/>;
     }
 }

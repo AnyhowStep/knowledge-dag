@@ -138,10 +138,10 @@ function initMathJax (mj : MathJaxT) : MathJaxT {
     return mj;
 }
 export async function getMathJax () : Promise<MathJaxT> {
-    if (MathJax == undefined) {
+    if (typeof MathJax == "undefined") {
         return new Promise<MathJaxT>((resolve) => {
             const interval = setInterval(() => {
-                if (MathJax != undefined) {
+                if (typeof MathJax != "undefined") {
                     clearInterval(interval);
                     return resolve(initMathJax(MathJax));
                 }

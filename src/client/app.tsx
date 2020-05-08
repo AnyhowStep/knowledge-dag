@@ -72,7 +72,7 @@ export function App (_props : Props) {
                     <Route path="/graph" component={r.graph.Graph}/>
                     <Route path="/access-token" component={r.AccessToken}/>
                     <Route path="/log-out" component={r.LogOut}/>
-                    <Route path="/markdown-help" component={r.NotImplemented}/>
+                    <Route path="/markdown-help" component={r.MarkdownHelp}/>
 
                     <Route path="/" component={r.HomePage}/>
                 </Switch>

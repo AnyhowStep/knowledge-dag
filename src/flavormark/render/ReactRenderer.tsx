@@ -31,7 +31,7 @@ export class ReactRenderer {
         this.subRenderers = subRenderers;
     }
     public getSubRenderer<NodeT extends fm.Node> (node : NodeT) : ReactSubRenderer<NodeT> {
-        for (let sub of this.subRenderers) {
+        for (const sub of this.subRenderers) {
             if (sub.canRender(node)) {
                 return sub;
             }

@@ -21,8 +21,12 @@ export class CodeBlock extends Component<CodeBlockProps, CodeBlockState> {
     }
     public render () {
         let className : string|undefined = undefined;
-        if (this.props.language) {
-            className = `language-${this.props.language}`;
+        if (this.props.language != undefined) {
+            if (this.props.language == "plaintext" || this.props.language == "nohighlight") {
+                className = this.props.language;
+            } else {
+                className = `language-${this.props.language}`;
+            }
         }
 
         return <pre><code className={className} ref={CodeBlock.Render}>{this.props.code}</code></pre>;

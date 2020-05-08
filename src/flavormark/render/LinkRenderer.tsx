@@ -13,10 +13,12 @@ export class LinkRenderer extends ReactSubRenderer<fm.CommonMark.Inline.LinkNode
     public render (node : fm.CommonMark.Inline.LinkNode, children : React.ReactNode[]) : React.ReactNode {
         //HACK THIS IS TO SUPPORT OLD-STYLE TOOLTIPS
         //TODO REMOVE ALL INSTANCES OF OLD-STYLE TOOLTIPS, USE NEW SYNTAX
+        //eslint-disable-next-line @typescript-eslint/prefer-string-starts-ends-with
         if (/^tooltip-src:/.test(node.destination)) {
             this.oldStyleTooltipSources[node.destination.substr(12)] = children;
             return <span></span>;
         }
+        //eslint-disable-next-line @typescript-eslint/prefer-string-starts-ends-with
         if (/^tooltip:/.test(node.destination)) {
             return (
                 <span>
@@ -30,6 +32,14 @@ export class LinkRenderer extends ReactSubRenderer<fm.CommonMark.Inline.LinkNode
                 </span>
             );
         }
-        return <a href={node.destination} title={node.title}>{children}</a>;
+        return (
+            <a
+                key={"a-" + JSON.stringify(node.sourceRange)}
+                href={node.destination}
+                title={node.title
+            }>
+                {children}
+            </a>
+        );
     }
 }
