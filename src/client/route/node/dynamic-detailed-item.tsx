@@ -1,12 +1,9 @@
 import * as React from "react";
 import * as classnames from "classnames";
-import {bigIntLib} from "bigint-lib";
-import {useError} from "../../ui";
-import {api} from "../../api";
-import {NodeDetailed} from "../../../api-mapper";
 import {ErrorMessage} from "../../ui/error-message";
 import {DetailedItem} from "./detailed-item";
 import {Link} from "react-router-dom";
+import {useFetch} from "./use-fetch";
 
 export interface DynamicDetailedItemProps {
     className : string,
@@ -16,38 +13,12 @@ export interface DynamicDetailedItemProps {
 }
 
 export const DynamicDetailedItem = (props : DynamicDetailedItemProps) => {
-    const error = useError();
-
-    const [node, setNode] = React.useState<NodeDetailed|undefined>(undefined);
-
-    React.useEffect(
-        () => {
-            setNode(undefined);
-            let cancelled = false;
-            api.node.fetchDetailed()
-                .setParam({
-                    nodeId : bigIntLib.BigInt(props.nodeId),
-                })
-                .send()
-                .then((response) => {
-                    if (cancelled) {
-                        return;
-                    }
-                    setNode(response.responseBody);
-                    error.reset();
-                })
-                .catch((err) => {
-                    if (cancelled) {
-                        return;
-                    }
-                    error.push("negative", err.message);
-                });
-            return () => {
-                cancelled = true;
-            };
-        },
-        [props.nodeId]
-    );
+    const {
+        error,
+        node,
+    } = useFetch({
+        nodeId : props.nodeId,
+    });
 
     return (
         <div className={classnames(

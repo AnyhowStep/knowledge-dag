@@ -10,6 +10,11 @@ export interface DetailedItemProps {
     node : NodeDetailed,
     renderViewGraphButton : boolean,
     buttons? : JSX.Element,
+
+    renderDependencies? : boolean,
+    renderDependents? : boolean,
+    renderButtons? : boolean,
+    renderDateTime? : boolean,
 }
 
 function zeroPadStart (str : string, length : number) {
@@ -117,55 +122,102 @@ function DependentList (node : { nodeId : bigint }, children : NodeDetailed["dep
 export function DetailedItem (props : DetailedItemProps) {
     return (
         <div className={classnames(props.className, "ui text container")}>
-            {props.buttons}
             {
-                (props.renderViewGraphButton == true) ?
-                <Link to={`/graph?start=${props.node.nodeId}`} className="ui button labeled icon">
-                    <i className="sitemap icon"></i>
-                    View Graph
-                </Link> :
-                undefined
+                props.renderButtons == false ?
+                undefined :
+                <React.Fragment>
+                    {props.buttons}
+                    {
+                        (props.renderViewGraphButton == true) ?
+                        <Link to={`/graph?start=${props.node.nodeId}`} className="ui button labeled icon">
+                            <i className="sitemap icon"></i>
+                            View Graph
+                        </Link> :
+                        undefined
+                    }
+                    <hr/>
+                </React.Fragment>
+            }
+            {
+                props.renderDependencies == false ?
+                undefined :
+                <React.Fragment>
+                    <h3>Dependencies</h3>
+                    <h4>Direct</h4>
+                    {DependencyList(
+                        props.node,
+                        props.node.dependencies
+                            .filter(p => p.direct)
+                    )}
+                    <h4>Indirect</h4>
+                    {DependencyList(
+                        props.node,
+                        props.node.dependencies
+                            .filter(p => !p.direct)
+                    )}
+                    <hr/>
+                </React.Fragment>
+            }
+            <h1 className="ui header" style={{ marginBottom : "0px" }}>
+                {props.node.latestEdit.title}
+                <Link to={`/node/${props.node.nodeId}`}>
+                    <small>(#{props.node.nodeId.toString()})</small>
+                </Link>
+            </h1>
+            {
+                props.node.latestEdit.description.length == 0 ?
+                undefined :
+                <div className="sub header">
+                    {props.node.latestEdit.description}
+                </div>
+            }
+            {
+                props.node.tags.length == 0 ?
+                undefined :
+                <p>
+                    {props.node.tags.map(t => <span className="ui blue mini label" key={t}>{t}</span>)}
+                </p>
+            }
+            {
+                props.renderDateTime == false ?
+                undefined :
+                <React.Fragment>
+                    <small>Created @ {renderDateTime(props.node.createdAt)}</small>
+                    <br/>
+                    <small>Last edited @ {renderDateTime(props.node.latestEdit.createdAt)}</small>
+                </React.Fragment>
             }
             <hr/>
-            <h3>Dependencies</h3>
-            <h4>Direct</h4>
-            {DependencyList(
-                props.node,
-                props.node.dependencies
-                    .filter(p => p.direct)
-            )}
-            <h4>Indirect</h4>
-            {DependencyList(
-                props.node,
-                props.node.dependencies
-                    .filter(p => !p.direct)
-            )}
+            <div>
+                {
+                    /^\s*$/.test(props.node.latestEdit.content) ?
+                    <div>
+                        <small>Nothing has been written yet</small>
+                    </div> :
+                    parseAndRenderReact(props.node.latestEdit.content)
+                }
+            </div>
             <hr/>
-            <h1 className="ui header">{props.node.latestEdit.title}<small>(#{props.node.nodeId.toString()})</small></h1>
-            <div className="sub header">{props.node.latestEdit.description}</div>
-            <p>
-                {props.node.tags.map(t => <span className="ui blue mini label" key={t}>{t}</span>)}
-            </p>
-            <small>Created @ {renderDateTime(props.node.createdAt)}</small>
-            <br/>
-            <small>Last edited @ {renderDateTime(props.node.latestEdit.createdAt)}</small>
-            <hr/>
-            <div>{parseAndRenderReact(props.node.latestEdit.content)}</div>
-            <hr/>
-            <h3>Dependents</h3>
-            <h4>Direct</h4>
-            {DependentList(
-                props.node,
-                props.node.dependents
-                    .filter(p => p.direct)
-            )}
-            <h4>Indirect</h4>
-            {DependentList(
-                props.node,
-                props.node.dependents
-                    .filter(p => !p.direct)
-            )}
-            <hr/>
+            {
+                props.renderDependents == false ?
+                undefined :
+                <React.Fragment>
+                    <h3>Dependents</h3>
+                    <h4>Direct</h4>
+                    {DependentList(
+                        props.node,
+                        props.node.dependents
+                            .filter(p => p.direct)
+                    )}
+                    <h4>Indirect</h4>
+                    {DependentList(
+                        props.node,
+                        props.node.dependents
+                            .filter(p => !p.direct)
+                    )}
+                    <hr/>
+                </React.Fragment>
+            }
         </div>
     );
 }

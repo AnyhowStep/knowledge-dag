@@ -74,6 +74,8 @@ export function App (_props : Props) {
                     <Route path="/tag/:tagId(\d+)/delete" component={r.tag.Delete}/>
                     <Route path="/tag" component={r.tag.Paginate}/>
 
+                    <Route path="/textbook/:textbookId" component={r.textbook.Fetch}/>
+
                     <Route path="/graph" component={r.graph.Graph}/>
                     <Route path="/access-token" component={r.AccessToken}/>
                     <Route path="/log-out" component={r.LogOut}/>
