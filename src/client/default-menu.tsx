@@ -1,6 +1,6 @@
 import * as React from "react";
 import {Route, RouteComponentProps} from "react-router-dom";
-import {DropdownHook} from "./ui";
+import {DropdownHook, QueryUtil} from "./ui";
 
 export interface DefaultMenuProps {
     sidebarHook : DropdownHook,
@@ -8,7 +8,24 @@ export interface DefaultMenuProps {
 export function DefaultMenu (props : DefaultMenuProps) {
     const [searchInput, setSearchInput] = React.useState("");
 
+    const [locationSearch, setLocationSearch] = React.useState("");
+
+    React.useEffect(
+        () => {
+            setSearchInput(
+                QueryUtil.getString(
+                    QueryUtil.toObject(locationSearch),
+                    "search",
+                    ""
+                )
+            );
+        },
+        [locationSearch]
+    );
+
     return <Route render={({history} : RouteComponentProps<any>) => {
+        setLocationSearch(history.location.search);
+
         const goToSearch = () => {
             if (/^\s*$/.test(searchInput)) {
                 return;
@@ -52,5 +69,5 @@ export function DefaultMenu (props : DefaultMenuProps) {
                 </div>
             </div>
         );
-    }}/>
+    }}/>;
 }

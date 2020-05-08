@@ -1,5 +1,6 @@
 import * as sql from "@squill/squill";
 import * as table from "../../table";
+import {isDirty} from "./is-dirty";
 
 function titleLike (title : string) {
     return sql.like(
@@ -57,6 +58,8 @@ export function filter (args : {
     keyword? : string[],
 
     tagExact? : string[],
+
+    dirty? : boolean,
 }) {
     /**
      * We `.slice(0, 5)` as a naive attempt at preventing DoS through querying
@@ -84,6 +87,14 @@ export function filter (args : {
             args.tagExact == undefined ?
             [true] :
             args.tagExact.slice(0, 5).map(tagExact => tagEqual(tagExact))
+        ),
+        (
+            args.dirty == undefined ?
+            true :
+            sql.eq(
+                isDirty(),
+                args.dirty
+            )
         ),
     );
 }

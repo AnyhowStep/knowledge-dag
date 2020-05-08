@@ -1,4 +1,19 @@
 import * as React from "react";
+import {parseAndRenderReact} from "../../../dist/flavormark";
+
+declare const require : {
+    (path : string) : { default : string },
+    context : (path : string, bool : boolean, regExp : RegExp) => {
+        keys : () => {
+            forEach : (
+                callback : (key : string) => void
+            ) => void
+        },
+        (path : string) : { default : string }
+    }
+};
+
+const searchHelpText = require("!raw-loader!./search-help.md").default;
 
 export interface HomePageProps {
 }
@@ -10,6 +25,8 @@ export const HomePage = (_props : HomePageProps) => {
                 <h1 className="ui dividing header">Knowledge DAG</h1>
 
                 TODO
+
+                {parseAndRenderReact(searchHelpText)}
 
                 <div style={{
                     paddingTop : "30px",
@@ -28,5 +45,5 @@ export const HomePage = (_props : HomePageProps) => {
                 </div>
             </div>
         </React.Fragment>
-    )
+    );
 };
