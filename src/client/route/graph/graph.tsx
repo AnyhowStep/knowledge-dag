@@ -12,10 +12,26 @@ import {explore} from "./explore";
 import {parseQuery} from "./parse-query";
 import {api} from "../../api";
 import {addNode} from "./add-or-update-edge";
+import {exploreRecursive} from "./explore-recursive";
+
+const MAX_RECURSION_COUNT = 10;
+
+const DEFAULT_RECURSION_COUNT = 5;
 
 export function Graph (props : RouteComponentProps<{}>) {
     const error = useError();
-    const [loading, setLoading] = React.useState(0);
+    const loadingCount = React.useRef(0);
+
+    const [/* renderCount */, setRenderCount] = React.useState(0);
+
+    function incrementLoadingCount () {
+        ++loadingCount.current;
+        setRenderCount(loadingCount.current);
+    }
+    function decrementLoadingCount () {
+        --loadingCount.current;
+        setRenderCount(loadingCount.current);
+    }
 
     const renderElement = React.useRef<HTMLDivElement|null>(null);
 
@@ -91,7 +107,7 @@ export function Graph (props : RouteComponentProps<{}>) {
                     return;
                 }
 
-                setLoading(loading+1);
+                incrementLoadingCount();
                 await explore({
                     nodeId : e.nodes[0],
                     up : true,
@@ -100,11 +116,18 @@ export function Graph (props : RouteComponentProps<{}>) {
                     edges,
                     onInconsistencyDetected,
                     firstAddedNode,
-                });
+                }).then(
+                    () => {
+                        decrementLoadingCount();
+                    },
+                    (err) => {
+                        error.push("negative", [err.message]);
+                        decrementLoadingCount();
+                    }
+                );
                 nodes.flush();
                 edges.flush();
                 newNetwork.redraw();
-                setLoading(loading-1);
             };
 
             newNetwork.on("click", onNodeSelected);
@@ -251,6 +274,24 @@ export function Graph (props : RouteComponentProps<{}>) {
         [searchRef.current]
     );
 
+    const query = QueryUtil.toObject(searchRef.current);
+    const showExplorationUi = QueryUtil.getBoolean(query, "showExplorationUi", false);
+    const selectedNodeId = QueryUtil.getBigInt(query, "selectedNodeId", undefined);
+
+    const [recursionCount, setRecursionCount] = React.useState(DEFAULT_RECURSION_COUNT.toString());
+
+    function getRecursionCount () {
+        let result = parseInt(recursionCount);
+        if (!isFinite(result)) {
+            result = DEFAULT_RECURSION_COUNT;
+        }
+        if (result > MAX_RECURSION_COUNT) {
+            result = MAX_RECURSION_COUNT;
+        }
+        setRecursionCount(result.toString());
+        return result;
+    }
+
     return (
         <div style={{
             height:"100%",
@@ -264,36 +305,128 @@ export function Graph (props : RouteComponentProps<{}>) {
                 ref={renderElement}
             >
             </div>
-            {/*
-                (this.state.selectedNodeId == undefined) ?
-                    undefined :
-                    <span style={{
-                        position : "fixed",
-                        top : "70px",
-                        right : "5px",
-                        textAlign : "right",
-                        width : "100px",
-                        display : "flex",
-                        flexDirection : "column",
-                    }}>
-                        <div className="ui input">
-                            <input
-                                style={{ textAlign : "right" }}
-                                type="number"
-                                value={this.state.recursiveInputValue}
-                                onChange={(e) => {
-                                    this.setState({
-                                        recursiveInputValue : e.target.value,
-                                    });
-                                }}
-                            />
-                        </div>
-                        <ui.Button onClick={this.loadRecursiveClick}>Recursive</ui.Button>
-                        <ui.Button onClick={this.loadSuperClick}>Super</ui.Button>
-                        <ui.Button onClick={this.loadSubClick}>Sub</ui.Button>
-                        <ui.Button onClick={this.focus}>Focus</ui.Button>
-                    </span>
-            */}
+            {
+                (showExplorationUi && selectedNodeId != undefined) ?
+                <span style={{
+                    position : "fixed",
+                    top : "70px",
+                    right : "5px",
+                    textAlign : "right",
+                    width : "100px",
+                    display : "flex",
+                    flexDirection : "column",
+                }}>
+                    <div className="ui input">
+                        <input
+                            style={{ textAlign : "right" }}
+                            type="number"
+                            value={recursionCount}
+                            onChange={(e) => {
+                                setRecursionCount(e.target.value);
+                            }}
+                        />
+                    </div>
+                    <button
+                        className="ui button"
+                        onClick={async () => {
+                            incrementLoadingCount();
+                            await exploreRecursive({
+                                nodeId : selectedNodeId.toString(),
+                                count : getRecursionCount(),
+                                up : true,
+                                down : false,
+                                nodes,
+                                edges,
+                                onInconsistencyDetected,
+                                firstAddedNode,
+                            }).then(
+                                () => {
+                                    decrementLoadingCount();
+                                },
+                                (err) => {
+                                    error.push("negative", [err.message]);
+                                    decrementLoadingCount();
+                                }
+                            );
+                            nodes.flush();
+                            edges.flush();
+                            if (network != undefined) {
+                                network.redraw();
+                            }
+                        }}
+                    >
+                        Parent
+                    </button>
+                    <button
+                        className="ui button"
+                        onClick={async () => {
+                            incrementLoadingCount();
+                            await exploreRecursive({
+                                nodeId : selectedNodeId.toString(),
+                                count : getRecursionCount(),
+                                up : false,
+                                down : true,
+                                nodes,
+                                edges,
+                                onInconsistencyDetected,
+                                firstAddedNode,
+                            }).then(
+                                () => {
+                                    decrementLoadingCount();
+                                },
+                                (err) => {
+                                    error.push("negative", [err.message]);
+                                    decrementLoadingCount();
+                                }
+                            );
+                            nodes.flush();
+                            edges.flush();
+                            if (network != undefined) {
+                                network.redraw();
+                            }
+                        }}
+                    >
+                        Child
+                    </button>
+                    <button
+                        className="ui button"
+                        onClick={async () => {
+                            incrementLoadingCount();
+                            await exploreRecursive({
+                                nodeId : selectedNodeId.toString(),
+                                count : getRecursionCount(),
+                                up : true,
+                                down : true,
+                                nodes,
+                                edges,
+                                onInconsistencyDetected,
+                                firstAddedNode,
+                            }).then(
+                                () => {
+                                    decrementLoadingCount();
+                                },
+                                (err) => {
+                                    error.push("negative", [err.message]);
+                                    decrementLoadingCount();
+                                }
+                            );
+                            nodes.flush();
+                            edges.flush();
+                            if (network != undefined) {
+                                network.redraw();
+                            }
+                        }}
+                    >
+                        Recursive
+                    </button>
+                    {/*
+                    <ui.Button onClick={this.loadSubClick}>Child</ui.Button>
+                    <ui.Button onClick={this.loadRecursiveClick}>Both</ui.Button>
+                    <ui.Button onClick={this.focus}>Focus</ui.Button>
+                    */}
+                </span> :
+                undefined
+            }
             <ErrorMessage
                 error={error}
                 style={{
@@ -308,7 +441,7 @@ export function Graph (props : RouteComponentProps<{}>) {
             <div
                 className={classnames(
                     ["ui text loader inverted"],
-                    loading > 0 ? "active" : undefined,
+                    loadingCount.current > 0 ? "active" : undefined,
                 )}
                 style={{
                     position : "fixed",
