@@ -40,8 +40,8 @@ function renderDateTime (date : Date) {
     const period = date.getHours() >= 12 ? "PM" : "AM";
 
     const h = date.getHours() >= 12 ? date.getHours()-12 : date.getHours();
-    const hour = zeroPadStart(String(h), 2)
-    const minute = zeroPadStart(String(date.getMinutes()), 2)
+    const hour = zeroPadStart(String(h), 2);
+    const minute = zeroPadStart(String(date.getMinutes()), 2);
 
     return `${dayOfMonth} ${month}' ${year} ${hour}:${minute} ${period}`;
 }

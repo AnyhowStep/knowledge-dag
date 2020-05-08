@@ -13,6 +13,7 @@ import {parseQuery} from "./parse-query";
 import {api} from "../../api";
 import {addNode} from "./add-or-update-edge";
 import {exploreRecursive} from "./explore-recursive";
+import {DynamicDetailedItem} from "../node";
 
 const MAX_RECURSION_COUNT = 10;
 
@@ -277,6 +278,7 @@ export function Graph (props : RouteComponentProps<{}>) {
     const query = QueryUtil.toObject(searchRef.current);
     const showExplorationUi = QueryUtil.getBoolean(query, "showExplorationUi", false);
     const selectedNodeId = QueryUtil.getBigInt(query, "selectedNodeId", undefined);
+    const viewSelected = QueryUtil.getBoolean(query, "viewSelected", false);
 
     const [recursionCount, setRecursionCount] = React.useState(DEFAULT_RECURSION_COUNT.toString());
 
@@ -317,7 +319,27 @@ export function Graph (props : RouteComponentProps<{}>) {
                 Options
                 <i className="dropdown icon"></i>
                 <div className="menu">
-                    <button
+                    {
+                        selectedNodeId == undefined ?
+                        undefined :
+                        <div
+                            className="ui item"
+                            onClick={() => {
+                                const search = QueryUtil.mutateSearch(
+                                    props.location.search,
+                                    {
+                                        update : {
+                                            viewSelected : "true",
+                                        }
+                                    }
+                                );
+                                props.history.replace(`${props.location.pathname}${search}`);
+                            }}
+                        >
+                            View Selected
+                        </div>
+                    }
+                    <div
                         className="ui item"
                         onClick={() => {
                             const search = QueryUtil.mutateSearch(
@@ -340,7 +362,7 @@ export function Graph (props : RouteComponentProps<{}>) {
                             "Hide Exploration UI" :
                             "Show Exploration UI"
                         }
-                    </button>
+                    </div>
                 </div>
             </div>
             {
@@ -497,6 +519,26 @@ export function Graph (props : RouteComponentProps<{}>) {
             >
                 Loading...
             </div>
+            {
+                viewSelected && selectedNodeId != undefined ?
+                <DynamicDetailedItem
+                    className="graph-dynamic-detailed-item"
+                    nodeId={selectedNodeId.toString()}
+                    open={viewSelected}
+                    onClose={() => {
+                        const search = QueryUtil.mutateSearch(
+                            props.location.search,
+                            {
+                                update : {
+                                    viewSelected : undefined,
+                                }
+                            }
+                        );
+                        props.history.replace(`${props.location.pathname}${search}`);
+                    }}
+                /> :
+                undefined
+            }
             {/*<ViewNodeButton
                 onViewClick={this.onViewClick}
                 onCloseClick={this.onCloseClick}
