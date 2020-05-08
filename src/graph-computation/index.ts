@@ -128,10 +128,7 @@ export function initGraphComputation (args : InitGraphComputationArgs) {
         return node;
     }
 
-    args.pool.onReplace.addHandler((evt) => {
-        if (!evt.isFor(table.dirtyNode)) {
-            return;
-        }
+    function recomputeOnCommit (evt : sql.IEventBase) {
         evt.addOnCommitListener(() => {
             if (taskQueue.getShouldStop()) {
                 return;
@@ -149,29 +146,27 @@ export function initGraphComputation (args : InitGraphComputationArgs) {
                     }
                 );
         });
+    }
+
+    args.pool.onReplace.addHandler((evt) => {
+        if (!evt.isFor(table.dirtyNode)) {
+            return;
+        }
+        recomputeOnCommit(evt);
+    });
+
+    args.pool.onReplaceSelect.addHandler((evt) => {
+        if (!evt.isFor(table.dirtyNode)) {
+            return;
+        }
+        recomputeOnCommit(evt);
     });
 
     args.pool.onDelete.addHandler((evt) => {
         if (!evt.isFor(table.dirtyNode)) {
             return;
         }
-        evt.addOnCommitListener(() => {
-            if (taskQueue.getShouldStop()) {
-                return;
-            }
-            taskQueue.enqueue(computeGraph)
-                .then(
-                    (node) => {
-                        if (node == undefined) {
-                            return;
-                        }
-                        args.onCompute(node);
-                    },
-                    (err) => {
-                        args.onComputeError(err);
-                    }
-                );
-        });
+        recomputeOnCommit(evt);
     });
 
     return taskQueue;

@@ -5,11 +5,13 @@ export * from "./markdown-help";
 export * from "./not-implemented";
 
 import * as dependency from "./dependency";
+import * as dirtyNode from "./dirty-node";
 import * as graph from "./graph";
 import * as node from "./node";
 import * as tag from "./tag";
 export {
     dependency,
+    dirtyNode,
     graph,
     node,
     tag,

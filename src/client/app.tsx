@@ -38,7 +38,10 @@ export function App (_props : Props) {
                         {
                             storage.getAccessToken() == undefined ?
                             undefined :
-                            <Link className="ui item" to={`/markdown-help`}>Markdown Help</Link>
+                            <React.Fragment>
+                                <Link className="ui item" to={`/markdown-help`}>Markdown Help</Link>
+                                <Link className="ui item" to={`/dirty-node/root/create`}>Recompute All Graphs</Link>
+                            </React.Fragment>
                         }
                     </div>
                 </div>
@@ -64,6 +67,8 @@ export function App (_props : Props) {
                     <Route path="/node/:nodeId(\d+)/dependency/:parentId(\d+)/delete" component={r.dependency.Delete}/>
                     <Route path="/node/:nodeId(\d+)" component={r.node.Fetch}/>
                     <Route path="/node" component={r.node.Paginate}/>
+
+                    <Route path="/dirty-node/root/create" component={r.dirtyNode.CreateForRoot}/>
 
                     <Route path="/tag/:tagId(\d+)/update" component={r.tag.Update}/>
                     <Route path="/tag/:tagId(\d+)/delete" component={r.tag.Delete}/>
