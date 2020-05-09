@@ -30,7 +30,7 @@ export const Create = (props : CreateProps) => {
                     if (cancelled) {
                         return;
                     }
-                    setNode(response.responseBody)
+                    setNode(response.responseBody);
                     error.reset();
                 })
                 .catch((err) => {
@@ -38,10 +38,10 @@ export const Create = (props : CreateProps) => {
                         return;
                     }
                     error.push("negative", err.message);
-                })
+                });
             return () => {
                 cancelled = true;
-            }
+            };
         },
         [props.match.params.nodeId]
     );
@@ -135,6 +135,7 @@ export const Create = (props : CreateProps) => {
                 <div className="field">
                     <label>Parent</label>
                     <NodeSelect
+                        autofocus
                         value={parentId}
                         setValue={setParentId}
                     />

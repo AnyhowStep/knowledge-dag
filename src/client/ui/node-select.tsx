@@ -6,6 +6,7 @@ import {ErrorMessage} from "./error-message";
 import {api} from "../api";
 
 export interface NodeSelectProps {
+    readonly autofocus? : boolean,
     readonly readOnly? : boolean,
 
     readonly value : bigint|undefined,
@@ -47,7 +48,7 @@ export function NodeSelect (props : NodeSelectProps) {
                             setNode({
                                 label : response.responseBody.latestEdit.title,
                                 value : response.responseBody.nodeId.toString(),
-                            })
+                            });
                             error.reset();
                         })
                         .catch((err) => {
@@ -55,7 +56,7 @@ export function NodeSelect (props : NodeSelectProps) {
                                 return;
                             }
                             error.push("negative", err.message);
-                        })
+                        });
                     return () => {
                         cancelled = true;
                     };
@@ -70,6 +71,7 @@ export function NodeSelect (props : NodeSelectProps) {
     return (
         <div>
             <selectize.SimpleSelect
+                autofocus={props.autofocus}
                 filterOptions={items => items}
                 disabled={props.readOnly}
                 options={options}
@@ -93,7 +95,7 @@ export function NodeSelect (props : NodeSelectProps) {
                     if (keyword.length == 0) {
                         return <div className="ui yellow label">Try keying in more characters to start a search</div>;
                     } else {
-                        return <div></div>
+                        return <div></div>;
                     }
                 }}
                 onSearchChange={(search) => {
