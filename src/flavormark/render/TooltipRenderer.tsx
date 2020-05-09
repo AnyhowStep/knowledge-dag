@@ -8,10 +8,12 @@ export class TooltipRenderer extends ReactSubRenderer<TooltipNode> {
     public constructor () {
         super(TooltipNode);
     }
+    private keyHack = 0;
     public render (node : TooltipNode) : React.ReactNode {
+        ++this.keyHack;
         return (
             <Tooltip
-                key={"tooltip-" + JSON.stringify(node.sourceRange)}
+                key={"tooltip-" + JSON.stringify(node.sourceRange) + this.keyHack.toString()}
                 content={parseAndRenderReact(node.content)}
             >
                 <sup style={{
