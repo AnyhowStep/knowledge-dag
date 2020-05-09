@@ -8,6 +8,10 @@ export class TexBlockRenderer extends ReactSubRenderer<fm.FlavorMark.Block.TexBl
         super(fm.FlavorMark.Block.TexBlockNode);
     }
     public render (node : fm.FlavorMark.Block.TexBlockNode) : React.ReactNode {
-        return <MathRenderer key={node.literal + JSON.stringify(node.sourceRange)} math={node.literal} block={true}/>;
+        return <MathRenderer
+            key={"tex-block-" + JSON.stringify(node.sourceRange)}
+            math={node.literal}
+            block={true}
+        />;
     }
 }
