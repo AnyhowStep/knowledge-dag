@@ -984,13 +984,13 @@ export class Argument extends Component<ArgumentProps, ArgumentState> {
                 <div className="ui icon buttons">
                     <select className="ui huge button" onChange={(e) => {
                         if (
-                            parseInt(e.target.value) == ArgumentDisplayType.Graph ||
-                            parseInt(e.target.value) == ArgumentDisplayType.EnlargedGraph
+                            parseInt(e.target.value, 10) == ArgumentDisplayType.Graph ||
+                            parseInt(e.target.value, 10) == ArgumentDisplayType.EnlargedGraph
                         ) {
                             this.tryInitGraph();
                         }
                         this.setState({
-                            displayType : parseInt(e.target.value),
+                            displayType : parseInt(e.target.value, 10),
                         });
                     }}>
                         <option value={ArgumentDisplayType.Normal}>Normal</option>

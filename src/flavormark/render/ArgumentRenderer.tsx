@@ -77,7 +77,7 @@ export class ArgumentRenderer extends ReactSubRenderer<ArgumentNode> {
             const rawDependsOn : string = (columns.length > 2) ? columns[2] : "";
             const dependsOn = rawDependsOn.split(",").map((s) => {
                 s = s.trim();
-                return parseInt(s);
+                return parseInt(s, 10);
             }).filter((i) => {
                 return !isNaN(i);
             }).map((i) => {

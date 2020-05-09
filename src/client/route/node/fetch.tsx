@@ -53,6 +53,9 @@ export const Fetch = (props : FetchProps) => {
                                     <Link className="ui item" to={`/node/${node.nodeId}/delete`}>Delete</Link> :
                                     undefined
                                 }
+                                <Link className="ui item" to={`/node/${node.nodeId}/textbook/build`}>
+                                    Build Textbook
+                                </Link>
                             </div>
                         </div>
                     }

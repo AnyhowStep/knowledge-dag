@@ -10,6 +10,8 @@ export class LinkRenderer extends ReactSubRenderer<fm.CommonMark.Inline.LinkNode
     private oldStyleTooltipSources : {
         [name : string] : undefined|React.ReactNode[]
     } = {};
+
+    private keyHack = 0;
     public render (node : fm.CommonMark.Inline.LinkNode, children : React.ReactNode[]) : React.ReactNode {
         //HACK THIS IS TO SUPPORT OLD-STYLE TOOLTIPS
         //TODO REMOVE ALL INSTANCES OF OLD-STYLE TOOLTIPS, USE NEW SYNTAX
@@ -32,9 +34,10 @@ export class LinkRenderer extends ReactSubRenderer<fm.CommonMark.Inline.LinkNode
                 </span>
             );
         }
+        ++this.keyHack;
         return (
             <a
-                key={"a-" + JSON.stringify(node.sourceRange)}
+                key={"a-" + JSON.stringify(node.sourceRange) + this.keyHack.toString()}
                 href={node.destination}
                 title={node.title
             }>

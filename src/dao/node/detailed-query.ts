@@ -12,6 +12,7 @@ export function detailedQuery () {
         .select(columns => [
             columns.nodeId,
             columns.createdAt,
+            columns.depth,
         ])
         .map(async (row, connection) => {
             const latestEdit = await sql.LogUtil

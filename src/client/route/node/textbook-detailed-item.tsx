@@ -21,11 +21,12 @@ export const TextbookDetailedItem = (props : TextbookDetailedItemProps) => {
     return (
         <div
             className={classnames(
-                "",
+                "ui segment",
                 props.className
             )}
             style={{
-                paddingTop : "10px",
+                paddingTop : "2em",
+                paddingBottom : "2em",
             }}
         >
             <div className={classnames({
@@ -39,7 +40,7 @@ export const TextbookDetailedItem = (props : TextbookDetailedItemProps) => {
                 <DetailedItem
                     className=""
                     node={node}
-                    renderViewGraphButton={true}
+                    renderViewGraphButton={false}
                     renderDependencies={false}
                     renderDependents={false}
                     renderButtons={false}

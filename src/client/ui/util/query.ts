@@ -81,7 +81,7 @@ export namespace QueryUtil {
                 value = value[0];
             }
         }
-        const result = Number.parseInt(value);
+        const result = Number.parseInt(value, 10);
         if (isFinite(result)) {
             return result;
         } else {
@@ -124,7 +124,7 @@ export namespace QueryUtil {
                 value = value[0];
             }
         }
-        if (isFinite(Number.parseInt(value))) {
+        if (isFinite(Number.parseInt(value, 10))) {
             return bigIntLib.BigInt(value);
         } else {
             return defaultValue;

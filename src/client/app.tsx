@@ -65,6 +65,7 @@ export function App (_props : Props) {
                     <Route path="/node/:nodeId(\d+)/delete" component={r.node.Delete}/>
                     <Route path="/node/:nodeId(\d+)/dependency/create" component={r.dependency.Create}/>
                     <Route path="/node/:nodeId(\d+)/dependency/:parentId(\d+)/delete" component={r.dependency.Delete}/>
+                    <Route path="/node/:nodeId(\d+)/textbook/build" component={r.textbook.Build}/>
                     <Route path="/node/:nodeId(\d+)" component={r.node.Fetch}/>
                     <Route path="/node" component={r.node.Paginate}/>
 

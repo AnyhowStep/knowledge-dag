@@ -23,15 +23,15 @@ export function parseQuery (search : string) : GraphQuery & { start : number[] }
     {
         const start : undefined|string|(string[]) = queryObject.start;
         if (typeof start == "string") {
-            startArr.push(parseInt(start));
+            startArr.push(parseInt(start, 10));
         } else if (start instanceof Array) {
-            startArr.push(...start.map(parseInt));
+            startArr.push(...start.map(nodeId => parseInt(nodeId, 10)));
         }
     }
     {
         const selectedNodeId : undefined|string|(string[]) = queryObject.selectedNodeId;
         if (typeof selectedNodeId == "string") {
-            const id = parseInt(selectedNodeId);
+            const id = parseInt(selectedNodeId, 10);
             if (isFinite(id)) {
                 result.selectedNodeId = id;
             }

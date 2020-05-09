@@ -48,7 +48,7 @@ export function PageSelect (props : PageSelectProps) {
                     className="ui button"
                     value={Number(page)}
                     onChange={(e) => {
-                        setPage(parseInt(e.target.value));
+                        setPage(parseInt(e.target.value, 10));
                     }}
                 >
                     {options}

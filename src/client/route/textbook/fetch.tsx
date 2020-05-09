@@ -49,9 +49,13 @@ export function Fetch (props : FetchProps) {
     return (
         <div className="ui main container">
             {
-                nodeIds.map(nodeId => <TextbookDetailedItem
+                nodeIds.map((nodeId, index) => <TextbookDetailedItem
                     key={nodeId}
-                    className=""
+                    className={
+                        index % 2 == 0 ?
+                        "textbook-detailed-item-even" :
+                        "textbook-detailed-item-odd"
+                    }
                     nodeId={nodeId}
                 />)
             }

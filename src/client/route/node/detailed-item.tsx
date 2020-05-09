@@ -171,13 +171,14 @@ export function DetailedItem (props : DetailedItemProps) {
                     {props.node.latestEdit.description}
                 </div>
             }
-            {
-                props.node.tags.length == 0 ?
-                undefined :
-                <p>
-                    {props.node.tags.map(t => <span className="ui blue mini label" key={t}>{t}</span>)}
-                </p>
-            }
+            <p>
+                {
+                    props.node.tags.length == 0 ?
+                    undefined :
+                    props.node.tags.map(t => <span className="ui blue mini label" key={t}>{t}</span>)
+                }
+                <span className="ui gray mini label">Depth {props.node.depth.toString()}</span>
+            </p>
             {
                 props.renderDateTime == false ?
                 undefined :

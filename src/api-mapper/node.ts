@@ -4,6 +4,7 @@ import * as m from "../mapper";
 export const nodeDetailed = tm.object(
     m.node.nodeId,
     m.node.createdAt,
+    m.node.depth,
 
     tm.object(
         m.edit.title,

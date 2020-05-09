@@ -153,11 +153,9 @@ export function Graph (props : RouteComponentProps<{}>) {
                 //causing it to be the center of the screen
                 loadIdArr.unshift(query.selectedNodeId);
             }
-
             loadIdArr = [...new Set(loadIdArr)].filter((id) => {
                 return isFinite(id) && nodes.get(id.toString()) == undefined;
             });
-
             const load = async () => {
                 for (const nodeId of loadIdArr) {
                     await api.node.fetchSimple()
@@ -283,7 +281,7 @@ export function Graph (props : RouteComponentProps<{}>) {
     const [recursionCount, setRecursionCount] = React.useState(DEFAULT_RECURSION_COUNT.toString());
 
     function getRecursionCount () {
-        let result = parseInt(recursionCount);
+        let result = parseInt(recursionCount, 10);
         if (!isFinite(result)) {
             result = DEFAULT_RECURSION_COUNT;
         }
