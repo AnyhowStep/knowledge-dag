@@ -46,10 +46,12 @@ Other versions of MySQL and node may work fine, too.
 
 1. `git clone https://github.com/AnyhowStep/knowledge-dag`
 1. `npm install`
-1. `npm run watch`
-1. `WATCH=true npm run webpack-dev`
 1. `cp development.sample.env development.env`
 1. Configure `development.env`
+1. `cp client-config.sample.json client-config.json`
+1. Configure `client-config.json`
+1. `npm run watch`
+1. `WATCH=true npm run webpack-dev`
 1. `npm run migrate-up-to-latest`
 1. `npm run start-dev`
 
@@ -76,6 +78,19 @@ ACCESS_TOKEN="provide-your-own"
 
 # The port the server will run on
 PORT=8228
+```
+
+-----
+
+### Configuring `client-config.json`
+
+```js
+{
+    //The hostname of the server
+    "SERVER_ROOT" : "http://localhost:8228",
+    //The API root, normally just `"/api"`
+    "API_ROOT" : "/api"
+}
 ```
 
 -----
