@@ -4,11 +4,13 @@
     "files.insertFinalNewline": true,
     "files.trimFinalNewlines": true,
     "eslint.validate": [
-        "typescript"
+        "typescript",
+        "typescriptreact"
     ],
     "eslint.alwaysShowStatus": true,
     "eslint.options": {
     },
     "eslint.provideLintTask": true,
-    "eslint.enable": true
+    "eslint.enable": true,
+    "emmet.showExpandedAbbreviation": "never"
 }
