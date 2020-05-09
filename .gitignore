@@ -4,3 +4,4 @@ development.env
 client-config.json
 .vscode/settings.json
 client/MathJax
+v8-compile-cache-0

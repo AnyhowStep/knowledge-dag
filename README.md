@@ -45,14 +45,18 @@ Other versions of MySQL and node may work fine, too.
 ### Development
 
 1. `git clone https://github.com/AnyhowStep/knowledge-dag`
+1. `cd knowledge-dag`
 1. `npm install`
 1. `cp development.sample.env development.env`
 1. Configure `development.env`
 1. `cp client-config.sample.json client-config.json`
 1. Configure `client-config.json`
 1. `npm run watch`
+   If this step fails,
+   1. `npm install --save-dev typescript@3.5.1`
+   1. Retry `npm run watch`
 1. `WATCH=true npm run webpack-dev`
-1. `npm run migrate-up-to-latest`
+1. `ENV=development.env npm run migrate-up-to-latest`
 1. `npm run start-dev`
 
 -----
@@ -69,6 +73,7 @@ MIGRATOR_MYSQL_USERNAME="knowledge-dag-migrator"
 MIGRATOR_MYSQL_PASSWORD="provide-your-own-password"
 
 # The user is used by the server
+# GRANT SELECT, INSERT, UPDATE, DELETE
 MYSQL_USERNAME="knowledge-dag"
 MYSQL_PASSWORD="provide-your-own-password"
 
@@ -78,6 +83,11 @@ ACCESS_TOKEN="provide-your-own"
 
 # The port the server will run on
 PORT=8228
+
+#If you have an SSL cert you want to use with the server
+#SSL_KEY_PATH
+#SSL_CERT_PATH
+#SSL_CA_PATH
 ```
 
 -----
