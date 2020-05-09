@@ -20,6 +20,7 @@ function parseSearch (search : string) {
     let keywordStr = "";
     let tagExactStr = "";
     let dirty : boolean|undefined = undefined;
+    let tagged : boolean|undefined = undefined;
 
     const searchArr = search.split(/((?:\w|\-)+:)/);
     for (let i=0; i<searchArr.length; ++i) {
@@ -46,6 +47,16 @@ function parseSearch (search : string) {
                false :
                undefined
             );
+        } else if (cur == "tagged:") {
+            ++i;
+            const taggedStr = searchArr[i].trim().toLowerCase();
+            tagged = (
+               taggedStr == "true" ?
+               true :
+               taggedStr == "false" ?
+               false :
+               undefined
+            );
         } else {
             keywordStr += cur;
         }
@@ -57,6 +68,7 @@ function parseSearch (search : string) {
         keyword : toSearchArray(keywordStr),
         tagExact : toSearchArray(tagExactStr),
         dirty,
+        tagged,
     };
 }
 
@@ -72,6 +84,7 @@ export function Paginate (props : RouteComponentProps<{}>) {
                     keyword,
                     tagExact,
                     dirty,
+                    tagged,
                 } = parseSearch(QueryUtil.getString(query, "search", ""));
                 return api.node
                     .paginate()
@@ -83,6 +96,7 @@ export function Paginate (props : RouteComponentProps<{}>) {
                         keyword,
                         tagExact,
                         dirty,
+                        tagged,
                     })
                     .send()
                     .then(result => result.responseBody);

@@ -1,6 +1,7 @@
 import * as sql from "@squill/squill";
 import * as table from "../../table";
 import {isDirty} from "./is-dirty";
+import {hasTag} from "./has-tag";
 
 function titleLike (title : string) {
     return sql.like(
@@ -60,6 +61,7 @@ export function filter (args : {
     tagExact? : string[],
 
     dirty? : boolean,
+    tagged? : boolean,
 }) {
     /**
      * We `.slice(0, 5)` as a naive attempt at preventing DoS through querying
@@ -94,6 +96,14 @@ export function filter (args : {
             sql.eq(
                 isDirty(),
                 args.dirty
+            )
+        ),
+        (
+            args.tagged == undefined ?
+            true :
+            sql.eq(
+                hasTag(),
+                args.tagged
             )
         ),
     );

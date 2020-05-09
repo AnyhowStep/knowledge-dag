@@ -27,9 +27,6 @@ export function DefaultMenu (props : DefaultMenuProps) {
         setLocationSearch(history.location.search);
 
         const goToSearch = () => {
-            if (/^\s*$/.test(searchInput)) {
-                return;
-            }
             history.push(`/node?search=${encodeURIComponent(searchInput)}`);
         };
 

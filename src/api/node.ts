@@ -60,6 +60,7 @@ export const NodeApi = rc.toAxiosApi({
                 tm.array(tm.mysql.varChar(3, 255)).withName("tagExact").optional(),
 
                 tm.mysql.boolean().withName("dirty").optional(),
+                tm.mysql.boolean().withName("tagged").optional(),
             )),
         apiMapper.nodeSimple
     ),
