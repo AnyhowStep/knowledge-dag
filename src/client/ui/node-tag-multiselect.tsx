@@ -10,6 +10,7 @@ export interface NodeTagMultiselectProps {
     readonly readOnly? : boolean,
     readonly values : readonly string[],
     readonly setValues : (newValues : readonly string[]) => void,
+    readonly style? : React.CSSProperties,
 }
 
 export function NodeTagMultiselect (props : NodeTagMultiselectProps) {
@@ -20,7 +21,7 @@ export function NodeTagMultiselect (props : NodeTagMultiselectProps) {
     const [paginateTimer, setPaginateTimer] = React.useState<number|undefined>(undefined);
 
     return (
-        <div>
+        <div style={props.style}>
             <selectize.MultiSelect
                 disabled={props.readOnly}
                 options={options}
