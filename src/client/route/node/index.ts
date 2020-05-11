@@ -4,5 +4,6 @@ export * from "./detailed-item";
 export * from "./dynamic-detailed-item";
 export * from "./fetch";
 export * from "./paginate";
+export * from "./tag-list";
 export * from "./update";
 export * from "./use-fetch";

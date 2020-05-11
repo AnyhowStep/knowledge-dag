@@ -7,6 +7,7 @@ import {
 } from "../../ui";
 import {api} from "../../api";
 import {NodeSimple} from "../../../api-mapper";
+import {tagList} from "./tag-list";
 
 function toSearchArray (str : string) {
     return str
@@ -124,9 +125,7 @@ export function Paginate (props : RouteComponentProps<{}>) {
                                 node.tags.length == 0 ?
                                 undefined :
                                 <div className="description">
-                                    {node.tags.map(t => (
-                                        <span className="ui blue mini label" key={t}>{t}</span>
-                                    ))}
+                                    {tagList(node.tags)}
                                 </div>
                             }
                         </div>

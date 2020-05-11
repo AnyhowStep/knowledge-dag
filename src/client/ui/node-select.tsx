@@ -4,6 +4,8 @@ import "react-selectize/dist/index.css";
 import {useError} from "./hook";
 import {ErrorMessage} from "./error-message";
 import {api} from "../api";
+import {bigIntLib} from "bigint-lib";
+import * as route from "../route";
 
 export interface NodeSelectProps {
     readonly autofocus? : boolean,
@@ -13,12 +15,20 @@ export interface NodeSelectProps {
     readonly setValue : (newValue : bigint|undefined) => void,
 }
 
+interface MyOptionValue {
+    label : string,
+    value : {
+        nodeId : string,
+        tags : string[],
+    }
+}
+
 export function NodeSelect (props : NodeSelectProps) {
     const error = useError();
 
-    const [node, setNode] = React.useState<selectize.OptionValue|undefined>(undefined);
+    const [node, setNode] = React.useState<MyOptionValue|undefined>(undefined);
     const [search, setSearch] = React.useState("");
-    const [options, setOptions] = React.useState<selectize.OptionValue[]>([]);
+    const [options, setOptions] = React.useState<MyOptionValue[]>([]);
     const [paginateTimer, setPaginateTimer] = React.useState<number|undefined>(undefined);
 
     React.useEffect(
@@ -29,10 +39,13 @@ export function NodeSelect (props : NodeSelectProps) {
                 }
                 return undefined;
             } else {
-                if (node == undefined || node.value != props.value.toString()) {
+                if (node == undefined || node.value.nodeId != props.value.toString()) {
                     setNode({
                         label : `Node #${props.value}`,
-                        value : props.value.toString(),
+                        value : {
+                            nodeId : props.value.toString(),
+                            tags : [],
+                        },
                     });
 
                     let cancelled = false;
@@ -47,7 +60,10 @@ export function NodeSelect (props : NodeSelectProps) {
                             }
                             setNode({
                                 label : response.responseBody.latestEdit.title,
-                                value : response.responseBody.nodeId.toString(),
+                                value : {
+                                    nodeId : response.responseBody.nodeId.toString(),
+                                    tags : response.responseBody.tags,
+                                },
                             });
                             error.reset();
                         })
@@ -84,11 +100,15 @@ export function NodeSelect (props : NodeSelectProps) {
                 restoreOnBackspace={(item) => {
                     return item.label;
                 }}
-                onValueChange={(value : selectize.OptionValue) => {
-                    console.log("onValueChange", value);
-                    props.setValue(value.value);
+                onValueChange={(option : undefined|MyOptionValue) => {
+                    console.log("onValueChange", option);
+                    if (option == undefined) {
+                        props.setValue(undefined);
+                    } else {
+                        props.setValue(bigIntLib.BigInt(option.value.nodeId));
+                    }
                 }}
-                renderNoResultsFound={(_value : selectize.OptionValue, search) => {
+                renderNoResultsFound={(_value : MyOptionValue, search) => {
                     const keyword = search
                         .split(/\s+/g)
                         .filter(s => s.length >= 3);
@@ -97,6 +117,19 @@ export function NodeSelect (props : NodeSelectProps) {
                     } else {
                         return <div></div>;
                     }
+                }}
+                renderOption={(item : MyOptionValue) => {
+                    return (
+                        <div className="simple-option">
+                            {item.label}
+                            &nbsp;
+                            {
+                                item.value.tags.length == 0 ?
+                                undefined :
+                                route.node.tagList(item.value.tags)
+                            }
+                        </div>
+                    );
                 }}
                 onSearchChange={(search) => {
                     setSearch(search);
@@ -121,7 +154,10 @@ export function NodeSelect (props : NodeSelectProps) {
                                     setOptions(result.responseBody.rows.map((node) => {
                                         return {
                                             label : node.latestEdit.title,
-                                            value : node.nodeId.toString(),
+                                            value : {
+                                                nodeId : node.nodeId.toString(),
+                                                tags : node.tags,
+                                            },
                                         };
                                     }));
                                 })

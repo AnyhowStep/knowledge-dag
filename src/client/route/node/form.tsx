@@ -1,5 +1,6 @@
 import * as React from "react";
 import {NodeTagMultiselect} from "../../ui";
+import {tagList} from "./tag-list";
 
 export const useForm = () => {
     const [title, setTitle] = React.useState("");
@@ -111,9 +112,7 @@ export const Form = (props : UseForm) => {
                         {
                             tags.length == 0 ?
                             undefined :
-                            tags.map(t => (
-                                <span className="ui blue mini label" key={t}>{t}</span>
-                            ))
+                            tagList(tags)
                         }
                         {
                             description.length == 0 ?

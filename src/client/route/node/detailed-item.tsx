@@ -4,6 +4,7 @@ import {NodeDetailed} from "../../../api-mapper";
 import {Link} from "react-router-dom";
 import {storage} from "../../storage";
 import {parseAndRenderReact} from "../../../flavormark";
+import {tagList} from "./tag-list";
 
 export interface DetailedItemProps {
     className? : string,
@@ -175,7 +176,7 @@ export function DetailedItem (props : DetailedItemProps) {
                 {
                     props.node.tags.length == 0 ?
                     undefined :
-                    props.node.tags.map(t => <span className="ui blue mini label" key={t}>{t}</span>)
+                    tagList(props.node.tags)
                 }
                 <span className="ui gray mini label">Depth {props.node.depth.toString()}</span>
             </p>

@@ -68,7 +68,7 @@ export function NodeTagMultiselect (props : NodeTagMultiselectProps) {
                     } else if (values.map((v : selectize.OptionValue)=>v.label).indexOf(search) >= 0) {
                         return <div className="ui yellow label">Tag exists</div>;
                     } else {
-                        return <div></div>
+                        return <div></div>;
                     }
                 }}
                 onSearchChange={(search) => {
