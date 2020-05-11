@@ -133,7 +133,7 @@ export const Create = (props : CreateProps) => {
                                 {
                                     title.length == 0 ?
                                     <span style={{ color : "#cccccc" }}>Untitled</span> :
-                                    {title}
+                                    title
                                 }
                             </strong>
                             <br/>
