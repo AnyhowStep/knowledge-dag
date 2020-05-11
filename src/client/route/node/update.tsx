@@ -1,13 +1,14 @@
 import * as React from "react";
 import * as classnames from "classnames";
 import {bigIntLib} from "bigint-lib";
-import {NodeTagMultiselect, useError} from "../../ui";
+import {useError} from "../../ui";
 import {api} from "../../api";
 import {storage} from "../../storage";
 import {RouteComponentProps} from "react-router";
 import {ErrorMessage} from "../../ui/error-message";
 import {isMappingError} from "type-mapping/dist/error-util";
 import {NodeDetailed} from "../../../api-mapper";
+import {useForm, Form} from "./form";
 
 export interface UpdateProps extends RouteComponentProps<{ nodeId : string }> {
 
@@ -16,13 +17,22 @@ export interface UpdateProps extends RouteComponentProps<{ nodeId : string }> {
 export const Update = (props : UpdateProps) => {
     const error = useError();
 
-    const [node, setNode] = React.useState<NodeDetailed|undefined>(undefined);
-    const [title, setTitle] = React.useState("");
-    const [description, setDescription] = React.useState("");
-    const [content, setContent] = React.useState("");
-    const [tags, setTags] = React.useState<readonly string[]>([]);
+    const form = useForm();
 
-    const [submitDisabled, setSubmitDisabled] = React.useState(true);
+    const {
+        title,
+        setTitle,
+        description,
+        setDescription,
+        content,
+        setContent,
+        tags,
+        setTags,
+        submitDisabled,
+        setSubmitDisabled,
+    } = form;
+
+    const [node, setNode] = React.useState<NodeDetailed|undefined>(undefined);
 
     React.useEffect(
         () => {
@@ -59,10 +69,10 @@ export const Update = (props : UpdateProps) => {
                         return;
                     }
                     error.push("negative", err.message);
-                })
+                });
             return () => {
                 cancelled = true;
-            }
+            };
         },
         [props.match.params.nodeId]
     );
@@ -131,56 +141,7 @@ export const Update = (props : UpdateProps) => {
                             });
                     }}
                 >
-                    <div className="fields equal width">
-                        <div className="field">
-                            <label>Title</label>
-                            <input
-                                type="text"
-                                placeholder="Title"
-                                value={title}
-                                onChange={(e) => {
-                                    setTitle(e.target.value);
-                                }}
-                            />
-                        </div>
-                        <div className="field">
-                            <label>Description</label>
-                            <input
-                                type="text"
-                                placeholder="Description"
-                                value={description}
-                                onChange={(e) => {
-                                    setDescription(e.target.value);
-                                }}
-                            />
-                        </div>
-                    </div>
-                    <div className="field">
-                        <label>Tags</label>
-                        <NodeTagMultiselect
-                            values={tags}
-                            setValues={setTags}
-                        />
-                    </div>
-                    <textarea
-                        placeholder="Content"
-                        style={{
-                            fontFamily : `"Courier New", Courier, monospace`,
-                            maxHeight : "unset",
-                            flex : 1,
-                        }}
-                        value={content}
-                        onChange={(e) => {
-                            setContent(e.target.value);
-                        }}
-                    ></textarea>
-                    <button
-                        className={"ui button large primary"}
-                        type="submit"
-                        disabled={submitDisabled}
-                    >
-                        Submit
-                    </button>
+                    <Form {...form}/>
                     <ErrorMessage error={error}/>
                 </form>
             }
