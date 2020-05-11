@@ -105,6 +105,7 @@ export function NodeSelect (props : NodeSelectProps) {
                     if (option == undefined) {
                         props.setValue(undefined);
                     } else {
+                        setSearch("");
                         props.setValue(bigIntLib.BigInt(option.value.nodeId));
                     }
                 }}
