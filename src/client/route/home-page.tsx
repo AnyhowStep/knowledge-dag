@@ -1,5 +1,5 @@
 import * as React from "react";
-import {parseAndRenderReact} from "../../../dist/flavormark";
+import {parseAndRenderReact} from "../../flavormark";
 
 declare const require : {
     (path : string) : { default : string },

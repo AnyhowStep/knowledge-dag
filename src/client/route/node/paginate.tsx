@@ -120,6 +120,15 @@ export function Paginate (props : RouteComponentProps<{}>) {
                                     {node.latestEdit.description}
                                 </div>
                             }
+                            {
+                                node.tags.length == 0 ?
+                                undefined :
+                                <div className="description">
+                                    {node.tags.map(t => (
+                                        <span className="ui blue mini label" key={t}>{t}</span>
+                                    ))}
+                                </div>
+                            }
                         </div>
                     </Link>
                 );

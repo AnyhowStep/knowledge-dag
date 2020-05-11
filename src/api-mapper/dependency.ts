@@ -11,6 +11,8 @@ export const parentDetailed = tm.object(
         m.edit.title,
         m.edit.description,
     ).withName("latestEdit"),
+
+    tm.array(m.tag.title).withName("tags"),
 );
 export type ParentDetailed = ReturnType<typeof parentDetailed>;
 
@@ -24,5 +26,7 @@ export const childDetailed = tm.object(
         m.edit.title,
         m.edit.description,
     ).withName("latestEdit"),
+
+    tm.array(m.tag.title).withName("tags"),
 );
 export type ChildDetailed = ReturnType<typeof childDetailed>;

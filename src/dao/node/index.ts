@@ -1,6 +1,7 @@
 export * from "./create";
 export * from "./delete";
 export * from "./detailed-query";
+export * from "./fetch-tags";
 export * from "./filter";
 export * from "./is-dirty";
 export * from "./is-root";

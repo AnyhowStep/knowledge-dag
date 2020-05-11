@@ -1,7 +1,7 @@
 import {bigIntLib} from "bigint-lib";
 import {VisEdge, VisChosenEdge, VisNode, Group} from "./model";
 import {DataSetWrapper} from "./data-set-wrapper";
-import {ParentDetailed, ChildDetailed} from "../../../../dist/api-mapper";
+import {ParentDetailed, ChildDetailed} from "../../../api-mapper";
 
 function setEdgeGroup (edge : VisEdge) {
     if (edge.direct) {
@@ -131,6 +131,7 @@ export function addNode (
             title : string,
             description : string,
             depth : bigint,
+            tags : string[],
         },
         group? : Group.UnexploredRoot|Group.Explored|Group.Unexplored,
         nodes : DataSetWrapper<VisNode>,
@@ -166,11 +167,24 @@ export function addNode (
         title = lines.join("\n");
     }
 
+    const nodeTitle : string[] = [];
+
+    if (node.description.length > 0) {
+        nodeTitle.push(node.description);
+    }
+    if (node.tags.length > 0) {
+        nodeTitle.push(`<small>${node.tags.join(", ")}</small>`);
+    }
+
     const depth = offsetDepth(node.depth, firstAddedNode);
     const newNode : VisNode = {
         group : group,
         id : node.nodeId,
-        title : (node.description.length == 0) ? undefined : node.description,
+        title : (
+            nodeTitle.length == 0 ?
+            undefined :
+            nodeTitle.join("<br>")
+        ),
         label : title,
         data : node,
         level : depth,
@@ -226,6 +240,7 @@ export function addParent (
             depth : parent.depth,
             title : parent.latestEdit.title,
             description : parent.latestEdit.description,
+            tags : parent.tags,
         },
         nodes,
         firstAddedNode,
@@ -275,6 +290,7 @@ export function addChild (
             depth : child.depth,
             title : child.latestEdit.title,
             description : child.latestEdit.description,
+            tags : child.tags,
         },
         nodes,
         firstAddedNode,

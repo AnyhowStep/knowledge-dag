@@ -1,5 +1,6 @@
 import * as sql from "@squill/squill";
 import * as table from "../../table";
+import {fetchTags} from "../node";
 
 export function parentDetailedQuery () {
     return sql
@@ -31,10 +32,13 @@ export function parentDetailedQuery () {
                 ])
                 .fetchOne(connection);
 
+            const tags = await fetchTags(connection, { nodeId : row.dependency.parentId });
+
             return {
                 ...row.dependency,
                 ...row.parent,
                 latestEdit,
+                tags,
             };
         });
 }

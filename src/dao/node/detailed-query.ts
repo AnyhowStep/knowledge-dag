@@ -1,5 +1,6 @@
 import * as sql from "@squill/squill";
 import * as table from "../../table";
+import {fetchTags} from "./fetch-tags";
 
 export function detailedQuery () {
     return sql
@@ -28,20 +29,7 @@ export function detailedQuery () {
                 ])
                 .fetchOne(connection);
 
-            const tags = await sql.from(table.nodeTag)
-                .whereEq(
-                    columns => columns.nodeId,
-                    row.node.nodeId
-                )
-                .innerJoinUsingPrimaryKey(
-                    tables => tables.nodeTag,
-                    table.tag
-                )
-                .orderBy(columns => [
-                    columns.tag.title.asc()
-                ])
-                .selectValue(columns => columns.tag.title)
-                .fetchValueArray(connection);
+            const tags = await fetchTags(connection, row.node);
 
             const dependencies = await sql.from(table.dependency)
                 .whereEq(
