@@ -2,6 +2,7 @@ export * from "./AnchorItem";
 export * from "./Argument";
 export * from "./Button";
 export * from "./CodeBlock";
+export * from "./Dfa";
 export * from "./ErrorMessage";
 export * from "./HtmlBlock";
 export * from "./LinkButton";
