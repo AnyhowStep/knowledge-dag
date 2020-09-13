@@ -6,11 +6,11 @@ import {DfaNode} from "./DfaNode";
     a,b,c,d
     q0
     q3,q4
-    q0 | q0, q2, q1, q1
-    q1 | q3, q2, q0, q1
-    q2 | q4, q1, q3, q1
-    q3 | q2, q1, q4, q3
-    q4 | q1, q4, q2, q0
+    q0 | q0 | q2 | q1 | q1
+    q1 | q3 | q2 | q0 | q1
+    q2 | q4 | q1 | q3 | q1
+    q3 | q2 | q1 | q4 | q3
+    q4 | q1 | q4 | q2 | q0
 */
 export class DfaParser extends fm.BlockParser<DfaNode> {
     public acceptsLines = false;
@@ -27,11 +27,13 @@ export class DfaParser extends fm.BlockParser<DfaNode> {
             return false;
         }
         const paragraphStr = parser.getParagraphString(node);
-        if (!/^\|Dfa\|\s*$/.test(paragraphStr)) {
+        const match = /^\|Dfa\|\s*(.+?)?\s*$/.exec(paragraphStr);
+        if (match == undefined) {
             return false;
         }
         const line = parser.currentLine.slice(parser.nextNonspace);
         const dfa : DfaNode = parser.addChild(this, parser.nextNonspace);
+        dfa.name = match[1] == undefined ? "" : match[1];
         dfa.rawAlphabet = line;
         node.unlink();
         parser.advanceOffset(parser.currentLine.length);

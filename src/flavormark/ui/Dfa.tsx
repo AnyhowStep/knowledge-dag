@@ -72,8 +72,9 @@ function mj2img (input : string, color : string, isAccept : boolean) : Promise<{
                     image.onload = () => {
                         const padding = 40;
                         const canvas = document.createElement("canvas");
-                        canvas.width = image.width + padding*2;
-                        canvas.height = image.height + padding*2;
+                        const size = Math.max(image.width, image.height);
+                        canvas.width = size + padding*2;
+                        canvas.height = size + padding*2;
                         const context = canvas.getContext("2d");
 
                         if (context != undefined) {
@@ -81,9 +82,9 @@ function mj2img (input : string, color : string, isAccept : boolean) : Promise<{
                             context.beginPath();
 
                             context.arc(
-                                image.width/2+padding,
-                                image.height/2+padding,
-                                image.width/2+padding,
+                                size/2+padding,
+                                size/2+padding,
+                                size/2+padding,
                                 0,
                                 Math.PI*2,
                                 false
@@ -97,9 +98,9 @@ function mj2img (input : string, color : string, isAccept : boolean) : Promise<{
                                 context.beginPath();
 
                                 context.arc(
-                                    image.width/2+padding,
-                                    image.height/2+padding,
-                                    image.width/2+(padding * 3 / 4),
+                                    size/2+padding,
+                                    size/2+padding,
+                                    size/2+(padding * 3 / 4),
                                     0,
                                     Math.PI*2,
                                     false
@@ -107,12 +108,15 @@ function mj2img (input : string, color : string, isAccept : boolean) : Promise<{
 
                                 context.stroke();
                             }
+
+                            const w = size + (padding);
+                            const h = w/image.width * image.height;
                             context.drawImage(
                                 image,
-                                padding/2,
-                                padding/2,
-                                canvas.width-padding,
-                                canvas.height-padding
+                                canvas.width/2 - w/2,
+                                canvas.height/2 - h/2,
+                                w,
+                                h
                             );
                             //context.fillStyle = color;
                             //context.globalCompositeOperation = "source-in";
@@ -137,19 +141,181 @@ function mj2img (input : string, color : string, isAccept : boolean) : Promise<{
 }
 
 export interface DfaDeclaration {
+    readonly name : string,
     readonly alphabet : readonly string[],
     readonly startState : string,
     readonly acceptStates : readonly string[],
-    readonly transitions : {
+    readonly transitions : readonly {
         readonly srcState : string,
         readonly dstStates : readonly string[]
     }[],
+}
+
+export function dfaUnion (dfa1 : DfaDeclaration, dfa2 : DfaDeclaration) : DfaDeclaration {
+    const alphabet = [...dfa1.alphabet];
+    for (const a2 of dfa2.alphabet) {
+        if (!alphabet.includes(a2)) {
+            alphabet.push(a2);
+        }
+    }
+
+    const startState = `\\ordered{${dfa1.startState}, ${dfa2.startState}}`;
+
+    const acceptStates : string[] = [];
+    for (const a1 of dfa1.acceptStates) {
+        for (const t2 of dfa2.transitions) {
+            acceptStates.push(`\\ordered{${a1}, ${t2.srcState}}`);
+        }
+    }
+    for (const a2 of dfa2.acceptStates) {
+        for (const t1 of dfa1.transitions) {
+            const acceptState = `\\ordered{${t1.srcState}, ${a2}}`;
+            if (!acceptStates.includes(acceptState)) {
+                acceptStates.push(acceptState);
+            }
+        }
+    }
+
+    const transitions : {
+        readonly srcState : string,
+        readonly dstStates : readonly string[]
+    }[] = [];
+    for (const t1 of dfa1.transitions) {
+        for (const t2 of dfa2.transitions) {
+            const srcState = `\\ordered{${t1.srcState}, ${t2.srcState}}`;
+            const dstStates : string[] = [];
+
+            for (const letter of alphabet) {
+                const index1 = dfa1.alphabet.indexOf(letter);
+                const index2 = dfa2.alphabet.indexOf(letter);
+
+                if (index1 < 0 || index2 < 0) {
+                    //TODO reject
+                    continue;
+                }
+
+                const dst1 = t1.dstStates[index1];
+                const dst2 = t2.dstStates[index2];
+                dstStates.push(`\\ordered{${dst1}, ${dst2}}`);
+            }
+
+            transitions.push({
+                srcState,
+                dstStates,
+            });
+        }
+    }
+
+    return {
+        name : `${dfa1.name} \\cup ${dfa2.name}`,
+        alphabet,
+        startState,
+        acceptStates,
+        transitions,
+    };
+}
+
+export function dfaIntersection (dfa1 : DfaDeclaration, dfa2 : DfaDeclaration) : DfaDeclaration {
+    const alphabet = [...dfa1.alphabet];
+    for (const a2 of dfa2.alphabet) {
+        if (!alphabet.includes(a2)) {
+            alphabet.push(a2);
+        }
+    }
+
+    const startState = `\\ordered{${dfa1.startState}, ${dfa2.startState}}`;
+
+    const acceptStates : string[] = [];
+    for (const a1 of dfa1.acceptStates) {
+        for (const a2 of dfa2.acceptStates) {
+            acceptStates.push(`\\ordered{${a1}, ${a2}}`);
+        }
+    }
+
+    const transitions : {
+        readonly srcState : string,
+        readonly dstStates : readonly string[]
+    }[] = [];
+    for (const t1 of dfa1.transitions) {
+        for (const t2 of dfa2.transitions) {
+            const srcState = `\\ordered{${t1.srcState}, ${t2.srcState}}`;
+            const dstStates : string[] = [];
+
+            for (const letter of alphabet) {
+                const index1 = dfa1.alphabet.indexOf(letter);
+                const index2 = dfa2.alphabet.indexOf(letter);
+
+                if (index1 < 0 || index2 < 0) {
+                    //TODO reject
+                    continue;
+                }
+
+                const dst1 = t1.dstStates[index1];
+                const dst2 = t2.dstStates[index2];
+                dstStates.push(`\\ordered{${dst1}, ${dst2}}`);
+            }
+
+            transitions.push({
+                srcState,
+                dstStates,
+            });
+        }
+    }
+
+    return {
+        name : `${dfa1.name} \\cap ${dfa2.name}`,
+        alphabet,
+        startState,
+        acceptStates,
+        transitions,
+    };
+}
+
+function getInvalidTransitionsImpl (startState : string, transitions : DfaDeclaration["transitions"]) {
+    return transitions.filter(t => {
+        return (
+            startState != t.srcState &&
+            transitions.every(other => {
+                if (other == t) {
+                    return true;
+                }
+                return !other.dstStates.includes(t.srcState);
+            })
+        );
+    });
+}
+
+function getInvalidTransitions (startState : string, transitions : DfaDeclaration["transitions"]) {
+    const result : DfaDeclaration["transitions"][number][] = [];
+
+    while (true) {
+        const partialResult = getInvalidTransitionsImpl(startState, transitions);
+        if (partialResult.length == 0) {
+            return result;
+        }
+
+        result.push(...partialResult);
+
+        transitions = transitions.filter(t => !partialResult.includes(t));
+    }
+}
+
+function getValidTransitions (startState : string, transitions : DfaDeclaration["transitions"]) {
+    while (true) {
+        const partialResult = getInvalidTransitionsImpl(startState, transitions);
+        if (partialResult.length == 0) {
+            return transitions;
+        }
+
+        transitions = transitions.filter(t => !partialResult.includes(t));
+    }
 }
 
 export enum DfaDisplayType {
     Graph,
     EnlargedGraph,
     Formal,
+    Markdown,
 }
 
 export interface DfaProps {
@@ -242,8 +408,10 @@ export class Dfa extends Component<DfaProps, DfaState> {
             alphabet,
             startState,
             acceptStates,
-            transitions,
         } = this.state.dfa;
+
+        //prune states that do not have incoming edges
+        const transitions = getValidTransitions(startState, this.state.dfa.transitions);
 
         const nodes = new vis.DataSet<DfaNode>();
         const edges = new vis.DataSet<DfaEdge>();
@@ -272,6 +440,9 @@ export class Dfa extends Component<DfaProps, DfaState> {
                         node.image = result.img;
                         node.shape = "circularImage";
                         node.label = " ";//transition.srcState;
+                        (node as any).shapeProperties = {
+                            useImageSize : false,
+                        };
                         nodes.update(node);
                         if (this.graph != undefined) {
                             this.graph.redraw();
@@ -398,22 +569,35 @@ export class Dfa extends Component<DfaProps, DfaState> {
 
     private renderFormal () {
         const {
+            name,
             alphabet,
             startState,
             acceptStates,
             transitions,
         } = this.state.dfa;
 
+        //prune states that do not have incoming edges
+        const prunedTransitions = getInvalidTransitions(startState, transitions);
+
         return (
             <div>
                 <MathRenderer
-                    math={`M = \\langle Q, \\Sigma, \\delta, q1, F \\rangle`}
+                    math={`${name.length == 0 ? "M" : name} = \\langle Q, \\Sigma, \\delta, q1, F \\rangle`}
                     block={false}
                 />, where
                 <ul>
                     <li>
                         <MathRenderer
-                            math={`Q = \\{ ${transitions.map(t => t.srcState).join(", ")} \\}`}
+                            math={`Q = \\{ ${transitions
+                                .map(t => {
+                                    return (
+                                        prunedTransitions.some(p => p.srcState == t.srcState) ?
+                                        `\\colorbox{red}{\\(${t.srcState}\\)}` :
+                                        t.srcState
+                                    );
+                                })
+                                .join(", ")
+                            } \\}`}
                             block={false}
                         />
                     </li>
@@ -452,15 +636,32 @@ export class Dfa extends Component<DfaProps, DfaState> {
                                 {
                                     transitions.map(transition => {
                                         return (
-                                            <tr key={transition.srcState}>
+                                            <tr
+                                                key={transition.srcState}
+                                                style={{
+                                                    backgroundColor : (
+                                                        prunedTransitions.includes(transition) ?
+                                                        "red" :
+                                                        undefined
+                                                    )
+                                                }}
+                                            >
                                                 <td style={{
                                                     borderRight : "solid",
                                                 }}>
-                                                    {transition.srcState}
+                                                    <MathRenderer
+                                                        math={transition.srcState}
+                                                        block={false}
+                                                    />
                                                 </td>
                                                 {
                                                     transition.dstStates.map((dstState, index) => {
-                                                        return <td key={index}>{dstState}</td>;
+                                                        return <td key={index}>
+                                                            <MathRenderer
+                                                                math={dstState}
+                                                                block={false}
+                                                            />
+                                                        </td>;
                                                     })
                                                 }
                                             </tr>
@@ -478,7 +679,20 @@ export class Dfa extends Component<DfaProps, DfaState> {
                     </li>
                     <li>
                         <MathRenderer
-                            math={`F = \\{ ${acceptStates.join(", ")} \\}`}
+                            math={`F = \\{ ${acceptStates
+                                .filter(acceptState => acceptState != "DNE")
+                                .map(acceptState => {
+                                    return (
+                                        (
+                                            prunedTransitions.some(p => p.srcState == acceptState) ||
+                                            !transitions.some(t => t.srcState == acceptState)
+                                        ) ?
+                                        `\\colorbox{red}{\\(${acceptState}\\)}` :
+                                        acceptState
+                                    );
+                                })
+                                .join(", ")
+                            } \\}`}
                             block={false}
                         />
                     </li>
@@ -487,18 +701,52 @@ export class Dfa extends Component<DfaProps, DfaState> {
         );
     }
 
+    private renderMarkdown (prune : boolean) {
+        const {
+            name,
+            alphabet,
+            startState,
+            acceptStates,
+            transitions,
+        } = this.state.dfa;
+
+        //prune states that do not have incoming edges
+        const prunedTransitions = getInvalidTransitions(startState, transitions);
+
+        const lines : string[] = [];
+        lines.push(`|Dfa| ${name}`);
+        lines.push(alphabet.join(", "));
+        lines.push(startState);
+        lines.push(acceptStates
+            .filter(acceptState => (
+                acceptState == "DNE" ||
+                (
+                    !prunedTransitions.some(p => p.srcState == acceptState) &&
+                    transitions.some(t => t.srcState == acceptState)
+                )
+            ))
+            .join(" | ")
+        );
+
+        for (const transition of transitions) {
+            if (prune && prunedTransitions.includes(transition)) {
+                continue;
+            }
+
+            lines.push(`${transition.srcState} | ${transition.dstStates.join(" | ")}`);
+        }
+
+        return <textarea
+            rows={lines.length+2}
+            style={{
+                width : "100%",
+            }}
+        >{lines.join("\n")}</textarea>;
+    }
+
     public render () {
         return (
             <div>
-                <div
-                    style={{
-                        display : this.state.displayType == DfaDisplayType.Formal ?
-                            "block" :
-                            "none"
-                    }}
-                >
-                    {this.renderFormal()}
-                </div>
                 <div
                     style={{
                         display : (
@@ -570,6 +818,24 @@ export class Dfa extends Component<DfaProps, DfaState> {
                     >
                     </div>
                 </div>
+                <div
+                    style={{
+                        display : this.state.displayType == DfaDisplayType.Formal ?
+                            "block" :
+                            "none"
+                    }}
+                >
+                    {this.renderFormal()}
+                </div>
+                <div
+                    style={{
+                        display : this.state.displayType == DfaDisplayType.Markdown ?
+                            "block" :
+                            "none"
+                    }}
+                >
+                    {this.renderMarkdown(true)}
+                </div>
                 <div className="ui icon buttons">
                     <select className="ui huge button" onChange={(e) => {
                         if (
@@ -589,6 +855,7 @@ export class Dfa extends Component<DfaProps, DfaState> {
                         <option value={DfaDisplayType.Graph}>Graph</option>
                         <option value={DfaDisplayType.EnlargedGraph}>Enlarged Graph</option>
                         <option value={DfaDisplayType.Formal}>Formal</option>
+                        <option value={DfaDisplayType.Markdown}>Markdown</option>
                     </select>
                 </div>
                 <br/>

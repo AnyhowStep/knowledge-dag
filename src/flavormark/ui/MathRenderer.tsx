@@ -72,9 +72,12 @@ export class MathRenderer extends Component<MathRendererProps, MathRendererState
             return;
         }
         getMathJax()
-            .then((MathJax) => {
-                MathJax.Hub.Queue(["Typeset", MathJax.Hub, element]);
-            });
+            .then(
+                (MathJax) => {
+                    MathJax.Hub.Queue(["Typeset", MathJax.Hub, element]);
+                },
+                console.error
+            );
     };
     private refRenderElement = (element : Element|null) => {
         if (this.state.willRenderMath) {

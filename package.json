@@ -63,7 +63,7 @@
     "ts-node": "^8.9.1",
     "typescript": "^3.5.1",
     "url-loader": "^0.6.2",
-    "vis": "^4.21.0",
+    "vis": "^4.21.0-EOL",
     "webpack": "^4.42.0",
     "webpack-cli": "^3.3.11"
   },
