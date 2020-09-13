@@ -151,7 +151,17 @@ export interface DfaDeclaration {
     }[],
 }
 
+function isFailState (acceptStates : readonly string[], t : DfaDeclaration["transitions"][number]) {
+    return (
+        !acceptStates.includes(t.srcState) &&
+        t.dstStates.every(dstState => dstState == t.srcState)
+    );
+}
+
 export function dfaUnion (dfa1 : DfaDeclaration, dfa2 : DfaDeclaration) : DfaDeclaration {
+    const fail1 = dfa1.transitions.filter(t => isFailState(dfa1.acceptStates, t));
+    const fail2 = dfa2.transitions.filter(t => isFailState(dfa2.acceptStates, t));
+
     const alphabet = [...dfa1.alphabet];
     for (const a2 of dfa2.alphabet) {
         if (!alphabet.includes(a2)) {
@@ -196,7 +206,19 @@ export function dfaUnion (dfa1 : DfaDeclaration, dfa2 : DfaDeclaration) : DfaDec
 
                 const dst1 = t1.dstStates[index1];
                 const dst2 = t2.dstStates[index2];
-                dstStates.push(`\\ordered{${dst1}, ${dst2}}`);
+
+                if (
+                    fail1.length > 0 &&
+                    fail2.length > 0 &&
+                    (
+                        fail1.some(t => t.srcState == dst1) ||
+                        fail2.some(t => t.srcState == dst2)
+                    )
+                ) {
+                    dstStates.push(`\\ordered{${fail1[0].srcState}, ${fail2[0].srcState}}`);
+                } else {
+                    dstStates.push(`\\ordered{${dst1}, ${dst2}}`);
+                }
             }
 
             transitions.push({
@@ -216,6 +238,9 @@ export function dfaUnion (dfa1 : DfaDeclaration, dfa2 : DfaDeclaration) : DfaDec
 }
 
 export function dfaIntersection (dfa1 : DfaDeclaration, dfa2 : DfaDeclaration) : DfaDeclaration {
+    const fail1 = dfa1.transitions.filter(t => isFailState(dfa1.acceptStates, t));
+    const fail2 = dfa2.transitions.filter(t => isFailState(dfa2.acceptStates, t));
+
     const alphabet = [...dfa1.alphabet];
     for (const a2 of dfa2.alphabet) {
         if (!alphabet.includes(a2)) {
@@ -252,7 +277,19 @@ export function dfaIntersection (dfa1 : DfaDeclaration, dfa2 : DfaDeclaration) :
 
                 const dst1 = t1.dstStates[index1];
                 const dst2 = t2.dstStates[index2];
-                dstStates.push(`\\ordered{${dst1}, ${dst2}}`);
+
+                if (
+                    fail1.length > 0 &&
+                    fail2.length > 0 &&
+                    (
+                        fail1.some(t => t.srcState == dst1) ||
+                        fail2.some(t => t.srcState == dst2)
+                    )
+                ) {
+                    dstStates.push(`\\ordered{${fail1[0].srcState}, ${fail2[0].srcState}}`);
+                } else {
+                    dstStates.push(`\\ordered{${dst1}, ${dst2}}`);
+                }
             }
 
             transitions.push({
@@ -270,7 +307,7 @@ export function dfaIntersection (dfa1 : DfaDeclaration, dfa2 : DfaDeclaration) :
         transitions,
     };
 }
-
+/*
 function getInvalidTransitionsImpl (startState : string, transitions : DfaDeclaration["transitions"]) {
     return transitions.filter(t => {
         return (
@@ -309,6 +346,55 @@ function getValidTransitions (startState : string, transitions : DfaDeclaration[
 
         transitions = transitions.filter(t => !partialResult.includes(t));
     }
+}*/
+
+function getValidTransitions2Impl (
+    cur : string,
+    transitions : Map<string, DfaDeclaration["transitions"][number]>,
+    validStates : Set<string>
+) {
+    if (validStates.has(cur)) {
+        return;
+    }
+    validStates.add(cur);
+
+    const transition = transitions.get(cur);
+    if (transition == undefined) {
+        return;
+    }
+
+    for (const dstState of transition.dstStates) {
+        getValidTransitions2Impl(
+            dstState,
+            transitions,
+            validStates
+        );
+    }
+}
+
+function getValidTransitions2 (
+    startState : string,
+    transitions : DfaDeclaration["transitions"]
+) : DfaDeclaration["transitions"] {
+    const validStates = new Set<string>();
+
+    const map = new Map<string, DfaDeclaration["transitions"][number]>();
+    for (const t of transitions) {
+        map.set(t.srcState, t);
+    }
+
+    getValidTransitions2Impl(
+        startState,
+        map,
+        validStates
+    );
+
+    return transitions.filter(t => validStates.has(t.srcState));
+}
+
+function getInvalidTransitions2 (startState : string, transitions : DfaDeclaration["transitions"]) {
+    const valid = getValidTransitions2(startState, transitions);
+    return transitions.filter(t => !valid.includes(t));
 }
 
 export enum DfaDisplayType {
@@ -411,7 +497,7 @@ export class Dfa extends Component<DfaProps, DfaState> {
         } = this.state.dfa;
 
         //prune states that do not have incoming edges
-        const transitions = getValidTransitions(startState, this.state.dfa.transitions);
+        const transitions = getValidTransitions2(startState, this.state.dfa.transitions);
 
         const nodes = new vis.DataSet<DfaNode>();
         const edges = new vis.DataSet<DfaEdge>();
@@ -577,7 +663,7 @@ export class Dfa extends Component<DfaProps, DfaState> {
         } = this.state.dfa;
 
         //prune states that do not have incoming edges
-        const prunedTransitions = getInvalidTransitions(startState, transitions);
+        const prunedTransitions = getInvalidTransitions2(startState, transitions);
 
         return (
             <div>
@@ -711,7 +797,7 @@ export class Dfa extends Component<DfaProps, DfaState> {
         } = this.state.dfa;
 
         //prune states that do not have incoming edges
-        const prunedTransitions = getInvalidTransitions(startState, transitions);
+        const prunedTransitions = getInvalidTransitions2(startState, transitions);
 
         const lines : string[] = [];
         lines.push(`|Dfa| ${name}`);
