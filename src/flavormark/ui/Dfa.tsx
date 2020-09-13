@@ -211,7 +211,7 @@ export function dfaUnion (dfa1 : DfaDeclaration, dfa2 : DfaDeclaration) : DfaDec
                     fail1.length > 0 &&
                     fail2.length > 0 &&
                     (
-                        fail1.some(t => t.srcState == dst1) ||
+                        fail1.some(t => t.srcState == dst1) &&
                         fail2.some(t => t.srcState == dst2)
                     )
                 ) {
