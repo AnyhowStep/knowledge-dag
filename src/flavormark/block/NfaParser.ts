@@ -1,24 +1,24 @@
 import * as fm from "flavormark";
-import {DfaNode} from "./DfaNode";
+import {NfaNode} from "./NfaNode";
 
 /*
     |Dfa|
     a,b,c,d
     q0
     q3|q4
-    q0 | q0 | q2 | q1 | q1
-    q1 | q3 | q2 | q0 | q1
-    q2 | q4 | q1 | q3 | q1
-    q3 | q2 | q1 | q4 | q3
-    q4 | q1 | q4 | q2 | q0
+    q0 | q0,q1 | q2 | q1 | q1 |
+    q1 | q3,q4 | q2 | q0 | q1 |
+    q2 |       | q1 | q3 | q1 |
+    q3 | q2    | q1 | q4 | q3 | q3
+    q4 | q1    | q4 | q2 | q0 | q1,q2
 */
-export class DfaParser extends fm.BlockParser<DfaNode> {
+export class NfaParser extends fm.BlockParser<NfaNode> {
     public acceptsLines = false;
     public parseInlines = false;
     public isLeaf = true;
     public acceptLazyContinuation = true;
 
-    public constructor (nodeCtor : fm.BlockNodeCtor<DfaNode> = DfaNode) {
+    public constructor (nodeCtor : fm.BlockNodeCtor<NfaNode> = NfaNode) {
         super(nodeCtor);
     }
 
@@ -27,12 +27,12 @@ export class DfaParser extends fm.BlockParser<DfaNode> {
             return false;
         }
         const paragraphStr = parser.getParagraphString(node);
-        const match = /^\|Dfa\|\s*(.+?)?\s*$/.exec(paragraphStr);
+        const match = /^\|Nfa\|\s*(.+?)?\s*$/.exec(paragraphStr);
         if (match == undefined) {
             return false;
         }
         const line = parser.currentLine.slice(parser.nextNonspace);
-        const dfa : DfaNode = parser.addChild(this, parser.nextNonspace);
+        const dfa : NfaNode = parser.addChild(this, parser.nextNonspace);
         dfa.name = match[1] == undefined ? "" : match[1];
         dfa.rawAlphabet = line;
         node.unlink();
@@ -42,7 +42,7 @@ export class DfaParser extends fm.BlockParser<DfaNode> {
     public continue () : boolean {
         return false;
     }
-    public lazyContinue (parser: fm.Parser, node: DfaNode) : void {
+    public lazyContinue (parser: fm.Parser, node: NfaNode) : void {
         if (parser.blank) {
             parser.finalize(node, parser.lineNumber);
             return;

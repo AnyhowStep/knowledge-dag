@@ -8,5 +8,6 @@ export * from "./HtmlBlock";
 export * from "./LinkButton";
 export * from "./LinkItem";
 export * from "./MathRenderer";
+export * from "./Nfa";
 export * from "./Tooltip";
 export * from "./TruthTable";
