@@ -1,7 +1,8 @@
 import {ReactSubRenderer} from "./ReactSubRenderer";
 import * as React from "react";
 import {DfaNode} from "../block/DfaNode";
-import {Dfa, DfaDeclaration, dfaIntersection, dfaUnion} from "../ui";
+import {Dfa} from "../ui";
+import {DfaDeclaration, DfaUtil} from "../../finite-automaton";
 
 export class DfaRenderer extends ReactSubRenderer<DfaNode> {
     public constructor () {
@@ -34,7 +35,7 @@ export class DfaRenderer extends ReactSubRenderer<DfaNode> {
                         No such DFA ${names[i]}
                     </div>;
                 }
-                dfa = dfaUnion(dfa, other);
+                dfa = DfaUtil.union(dfa, other);
             }
 
             dfa = {
@@ -64,13 +65,57 @@ export class DfaRenderer extends ReactSubRenderer<DfaNode> {
                         No such DFA ${names[i]}
                     </div>;
                 }
-                dfa = dfaIntersection(dfa, other);
+                dfa = DfaUtil.intersection(dfa, other);
             }
 
             dfa = {
                 ...dfa,
                 name,
             };
+            this.dfaCollection.set(name, dfa);
+
+            return <Dfa
+                dfa={dfa}
+                key={JSON.stringify(node.sourceRange)}
+            />;
+        }
+
+        if (node.rawAlphabet.startsWith("remove-accept-cycle:")) {
+            const name = node.rawAlphabet.replace("remove-accept-cycle:", "").trim();
+            let dfa = this.dfaCollection.get(name);
+            if (dfa == undefined) {
+                return <div style={{ color : "red" }}>
+                    No such DFA ${name}
+                </div>;
+            }
+            dfa = DfaUtil.removeAcceptCycles(dfa);
+            dfa = {
+                ...dfa,
+                name,
+            };
+
+            this.dfaCollection.set(name, dfa);
+
+            return <Dfa
+                dfa={dfa}
+                key={JSON.stringify(node.sourceRange)}
+            />;
+        }
+
+        if (node.rawAlphabet.startsWith("remove-invalid-transition:")) {
+            const name = node.rawAlphabet.replace("remove-invalid-transition:", "").trim();
+            let dfa = this.dfaCollection.get(name);
+            if (dfa == undefined) {
+                return <div style={{ color : "red" }}>
+                    No such DFA ${name}
+                </div>;
+            }
+            dfa = DfaUtil.removeInvalidTransitions(dfa);
+            dfa = {
+                ...dfa,
+                name,
+            };
+
             this.dfaCollection.set(name, dfa);
 
             return <Dfa

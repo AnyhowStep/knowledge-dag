@@ -1,0 +1,34 @@
+{
+  "name": "11",
+  "alphabet": [
+    "0",
+    "1"
+  ],
+  "startState": "11_0",
+  "acceptStates": [
+    "11_2"
+  ],
+  "transitions": [
+    {
+      "srcState": "11_0",
+      "dstStates": [
+        "11_0",
+        "11_1"
+      ]
+    },
+    {
+      "srcState": "11_1",
+      "dstStates": [
+        "11_0",
+        "11_2"
+      ]
+    },
+    {
+      "srcState": "11_2",
+      "dstStates": [
+        "11_2",
+        "11_2"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,81 @@
+{
+  "name": "b",
+  "alphabet": [
+    "0",
+    "1"
+  ],
+  "startState": "b_0",
+  "acceptStates": [
+    "b_{1\\_0}",
+    "b_{1\\_1}",
+    "b_{2\\_01}",
+    "b_{2\\_10}",
+    "b_{2\\_11}",
+    "b_3"
+  ],
+  "transitions": [
+    {
+      "srcState": "b_0",
+      "dstStates": [
+        "b_{skip}",
+        "b_{skip}"
+      ]
+    },
+    {
+      "srcState": "b_{skip}",
+      "dstStates": [
+        "b_{1\\_0}",
+        "b_{1\\_1}"
+      ]
+    },
+    {
+      "srcState": "b_{1\\_0}",
+      "dstStates": [
+        "b_{fail}",
+        "b_{2\\_01}"
+      ]
+    },
+    {
+      "srcState": "b_{1\\_1}",
+      "dstStates": [
+        "b_{2\\_10}",
+        "b_{2\\_11}"
+      ]
+    },
+    {
+      "srcState": "b_{2\\_01}",
+      "dstStates": [
+        "b_{fail}",
+        "b_3"
+      ]
+    },
+    {
+      "srcState": "b_{2\\_10}",
+      "dstStates": [
+        "b_{fail}",
+        "b_3"
+      ]
+    },
+    {
+      "srcState": "b_{2\\_11}",
+      "dstStates": [
+        "b_3",
+        "b_3"
+      ]
+    },
+    {
+      "srcState": "b_3",
+      "dstStates": [
+        "b_{1\\_0}",
+        "b_{1\\_1}"
+      ]
+    },
+    {
+      "srcState": "b_{fail}",
+      "dstStates": [
+        "b_{fail}",
+        "b_{fail}"
+      ]
+    }
+  ]
+}

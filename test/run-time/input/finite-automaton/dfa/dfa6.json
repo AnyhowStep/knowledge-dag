@@ -1,0 +1,49 @@
+{
+  "name": "same-start-end",
+  "alphabet": [
+    "0",
+    "1"
+  ],
+  "startState": "begin",
+  "acceptStates": [
+    "end0",
+    "end1"
+  ],
+  "transitions": [
+    {
+      "srcState": "begin",
+      "dstStates": [
+        "end0",
+        "end1"
+      ]
+    },
+    {
+      "srcState": "end0",
+      "dstStates": [
+        "end0",
+        "mid0"
+      ]
+    },
+    {
+      "srcState": "mid0",
+      "dstStates": [
+        "end0",
+        "mid0"
+      ]
+    },
+    {
+      "srcState": "end1",
+      "dstStates": [
+        "mid1",
+        "end1"
+      ]
+    },
+    {
+      "srcState": "mid1",
+      "dstStates": [
+        "mid1",
+        "end1"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "name": "a",
+  "alphabet": [
+    "0",
+    "1"
+  ],
+  "startState": "a_0",
+  "acceptStates": [
+    "a_{1\\_0}",
+    "a_{1\\_1}",
+    "a_{2\\_01}",
+    "a_{2\\_10}",
+    "a_{2\\_11}",
+    "a_3"
+  ],
+  "transitions": [
+    {
+      "srcState": "a_0",
+      "dstStates": [
+        "a_{1\\_0}",
+        "a_{1\\_1}"
+      ]
+    },
+    {
+      "srcState": "a_{1\\_0}",
+      "dstStates": [
+        "a_{fail}",
+        "a_{2\\_01}"
+      ]
+    },
+    {
+      "srcState": "a_{1\\_1}",
+      "dstStates": [
+        "a_{2\\_10}",
+        "a_{2\\_11}"
+      ]
+    },
+    {
+      "srcState": "a_{2\\_01}",
+      "dstStates": [
+        "a_{fail}",
+        "a_3"
+      ]
+    },
+    {
+      "srcState": "a_{2\\_10}",
+      "dstStates": [
+        "a_{fail}",
+        "a_3"
+      ]
+    },
+    {
+      "srcState": "a_{2\\_11}",
+      "dstStates": [
+        "a_3",
+        "a_3"
+      ]
+    },
+    {
+      "srcState": "a_3",
+      "dstStates": [
+        "a_{1\\_0}",
+        "a_{1\\_1}"
+      ]
+    },
+    {
+      "srcState": "a_{fail}",
+      "dstStates": [
+        "a_{fail}",
+        "a_{fail}"
+      ]
+    }
+  ]
+}

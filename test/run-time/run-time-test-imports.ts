@@ -1,4 +1,10 @@
 import "./input/dag/calculate-depths-snapshot";
-console.log(1, "/",2, "./input/dag/calculate-depths-snapshot");
+console.log(1, "/",5, "./input/dag/calculate-depths-snapshot");
 import "./input/dag/calculate-direct-parents-snapshot";
-console.log(2, "/",2, "./input/dag/calculate-direct-parents-snapshot");
+console.log(2, "/",5, "./input/dag/calculate-direct-parents-snapshot");
+import "./input/finite-automaton/dfa/dfa-collection";
+console.log(3, "/",5, "./input/finite-automaton/dfa/dfa-collection");
+import "./input/finite-automaton/dfa/util/intersection/test-00";
+console.log(4, "/",5, "./input/finite-automaton/dfa/util/intersection/test-00");
+import "./input/finite-automaton/dfa/util/union/test-00";
+console.log(5, "/",5, "./input/finite-automaton/dfa/util/union/test-00");
