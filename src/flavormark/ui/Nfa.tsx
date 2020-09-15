@@ -186,7 +186,8 @@ export function nfaUnion (nfa1 : NfaDeclaration, nfa2 : NfaDeclaration) : NfaDec
         ],
     };
 }
-
+/*
+Need to handle epsilon-transitions
 export function nfaUnion2 (nfa1 : NfaDeclaration, nfa2 : NfaDeclaration) : NfaDeclaration {
     const fail1 = nfa1.transitions.filter(t => isFailState(nfa1.acceptStates, t));
     const fail2 = nfa2.transitions.filter(t => isFailState(nfa2.acceptStates, t));
@@ -281,7 +282,7 @@ export function nfaUnion2 (nfa1 : NfaDeclaration, nfa2 : NfaDeclaration) : NfaDe
         transitions,
     };
 }
-
+*/
 export function nfaIntersection (nfa1 : NfaDeclaration, nfa2 : NfaDeclaration) : NfaDeclaration {
     const fail1 = nfa1.transitions.filter(t => isFailState(nfa1.acceptStates, t));
     const fail2 = nfa2.transitions.filter(t => isFailState(nfa2.acceptStates, t));
@@ -311,17 +312,9 @@ export function nfaIntersection (nfa1 : NfaDeclaration, nfa2 : NfaDeclaration) :
             const srcState = `\\ordered{${t1.srcState}, ${t2.srcState}}`;
             const dstStateSets : (readonly string[])[] = [];
 
-            for (const letter of [...alphabet, "\\varepsilon"]) {
-                const index1 = (
-                    letter == "\\varepsilon" ?
-                    nfa1.alphabet.length :
-                    nfa1.alphabet.indexOf(letter)
-                );
-                const index2 = (
-                    letter == "\\varepsilon" ?
-                    nfa2.alphabet.length :
-                    nfa2.alphabet.indexOf(letter)
-                );
+            for (const letter of alphabet) {
+                const index1 = nfa1.alphabet.indexOf(letter);
+                const index2 = nfa2.alphabet.indexOf(letter);
 
                 if (index1 < 0 || index2 < 0) {
                     //TODO reject
@@ -352,6 +345,71 @@ export function nfaIntersection (nfa1 : NfaDeclaration, nfa2 : NfaDeclaration) :
 
                 dstStateSets.push(dstStateSet);
             }
+
+            const epsilonStateSet : string[] = [];
+            const epsilonSet1 = t1.dstStateSets[nfa1.alphabet.length];
+            const epsilonSet2 = t2.dstStateSets[nfa2.alphabet.length];
+
+            if (epsilonSet1.length > 0) {
+                if (epsilonSet2.length > 0) {
+                    //Transition both
+                    for (const dst1 of epsilonSet1) {
+                        for (const dst2 of epsilonSet2) {
+                            if (
+                                fail1.length > 0 &&
+                                fail2.length > 0 &&
+                                (
+                                    fail1.some(t => t.srcState == dst1) ||
+                                    fail2.some(t => t.srcState == dst2)
+                                )
+                            ) {
+                                epsilonStateSet.push(`\\ordered{${fail1[0].srcState}, ${fail2[0].srcState}}`);
+                            } else {
+                                epsilonStateSet.push(`\\ordered{${dst1}, ${dst2}}`);
+                            }
+                        }
+                    }
+                } else {
+                    //Only transition 1
+                    const dst2 = t2.srcState;
+                    for (const dst1 of epsilonSet1) {
+                        if (
+                            fail1.length > 0 &&
+                            fail2.length > 0 &&
+                            (
+                                fail1.some(t => t.srcState == dst1) ||
+                                fail2.some(t => t.srcState == dst2)
+                            )
+                        ) {
+                            epsilonStateSet.push(`\\ordered{${fail1[0].srcState}, ${fail2[0].srcState}}`);
+                        } else {
+                            epsilonStateSet.push(`\\ordered{${dst1}, ${dst2}}`);
+                        }
+                    }
+                }
+            } else {
+                if (epsilonSet2.length > 0) {
+                    //Only transition 2
+                    const dst1 = t1.srcState;
+                    for (const dst2 of epsilonSet2) {
+                        if (
+                            fail1.length > 0 &&
+                            fail2.length > 0 &&
+                            (
+                                fail1.some(t => t.srcState == dst1) ||
+                                fail2.some(t => t.srcState == dst2)
+                            )
+                        ) {
+                            epsilonStateSet.push(`\\ordered{${fail1[0].srcState}, ${fail2[0].srcState}}`);
+                        } else {
+                            epsilonStateSet.push(`\\ordered{${dst1}, ${dst2}}`);
+                        }
+                    }
+                } else {
+                    //Do nothing
+                }
+            }
+            dstStateSets.push(epsilonStateSet);
 
             transitions.push({
                 srcState,
