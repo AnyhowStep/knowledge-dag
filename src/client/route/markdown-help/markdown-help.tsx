@@ -51,6 +51,8 @@ const keys = [
     "table.md",
     "argument.md",
     "truth-table.md",
+    "dfa.md",
+    "nfa.md",
 
     //Code
     "fenced-code-block.md",
