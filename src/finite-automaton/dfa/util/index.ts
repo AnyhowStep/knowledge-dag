@@ -3,6 +3,7 @@ export * from "./extend-alphabet";
 export * from "./find-fail-states";
 export * from "./find-invalid-transitions";
 export * from "./find-or-create-fail-state";
+export * from "./from-nfa";
 export * from "./generate-language";
 export * from "./get-valid-transitions";
 export * from "./intersection";

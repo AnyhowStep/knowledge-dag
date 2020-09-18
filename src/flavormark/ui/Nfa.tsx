@@ -4,7 +4,8 @@ import {MathRenderer} from "./MathRenderer";
 import {getMathJax} from "../interop/MathJax";
 import "vis/dist/vis.min.css";
 import * as vis from "vis";
-import {NfaUtil, NfaDeclaration} from "../../finite-automaton";
+import {NfaUtil, NfaDeclaration, DfaUtil} from "../../finite-automaton";
+import {Dfa} from "./Dfa";
 
 const brightColors = [
     //"#800000", //Maroon
@@ -245,6 +246,7 @@ export enum NfaDisplayType {
     Formal,
     Markdown,
     Json,
+    Dfa,
 }
 
 export interface NfaProps {
@@ -256,18 +258,25 @@ export interface NfaState {
 }
 
 export class Nfa extends Component<NfaProps, NfaState> {
+    private formalJsx : JSX.Element|undefined = undefined;
+    private dfaJsx    : JSX.Element|undefined = undefined;
+
     public constructor (props : NfaProps) {
         super(props);
         this.state = {
             nfa : props.nfa,
             displayType : NfaDisplayType.Graph,
         };
+        this.formalJsx = undefined;
+        this.dfaJsx = undefined;
     }
     public componentWillReceiveProps (newProps : NfaProps) {
         this.setState({
             nfa : newProps.nfa,
             displayType : NfaDisplayType.Graph,
         });
+        this.formalJsx = undefined;
+        this.dfaJsx = undefined;
     }
 
     public static RenderDescription (str : string) : JSX.Element|string {
@@ -518,126 +527,132 @@ export class Nfa extends Component<NfaProps, NfaState> {
         //prune states that do not have incoming edges
         const prunedTransitions = NfaUtil.getInvalidTransitions(startState, transitions);
 
-        return (
-            <div>
-                <MathRenderer
-                    math={`${name.length == 0 ? "N" : name} = \\langle Q, \\Sigma, \\delta, q1, F \\rangle`}
-                    block={false}
-                />, where
-                <ul>
-                    <li>
-                        <MathRenderer
-                            math={`Q = \\{ ${transitions
-                                .map(t => {
-                                    return (
-                                        prunedTransitions.some(p => p.srcState == t.srcState) ?
-                                        `\\colorbox{red}{\\(${t.srcState}\\)}` :
-                                        t.srcState
-                                    );
-                                })
-                                .join(", ")
-                            } \\}`}
-                            block={false}
-                        />
-                    </li>
-                    <li>
-                        <MathRenderer
-                            math={`\\Sigma = \\{ ${alphabet.join(", ")} \\}`}
-                            block={false}
-                        />
-                    </li>
-                    <li>
-                        <MathRenderer
-                            math={`\\delta =`}
-                            block={false}
-                        />
-                        <table cellPadding={5} style={{
-                            borderCollapse : "collapse",
-                            textAlign : "center",
-                        }}>
-                            <thead>
-                                <tr style={{
-                                    borderBottom : "solid",
-                                }}>
-                                    <th style={{
-                                        borderRight : "solid",
-                                    }}>
-
-                                    </th>
-                                    {
-                                        [...alphabet, "ε"].map(letter => {
-                                            return <th key={letter}>{letter}</th>;
-                                        })
-                                    }
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {
-                                    transitions.map(transition => {
+        if (
+            this.state.displayType == NfaDisplayType.Formal &&
+            this.formalJsx == undefined
+        ) {
+            this.formalJsx = (
+                <div>
+                    <MathRenderer
+                        math={`${name.length == 0 ? "N" : name} = \\langle Q, \\Sigma, \\delta, q1, F \\rangle`}
+                        block={false}
+                    />, where
+                    <ul>
+                        <li>
+                            <MathRenderer
+                                math={`Q = \\{ ${transitions
+                                    .map(t => {
                                         return (
-                                            <tr
-                                                key={transition.srcState}
-                                                style={{
-                                                    backgroundColor : (
-                                                        prunedTransitions.includes(transition) ?
-                                                        "red" :
-                                                        undefined
-                                                    )
-                                                }}
-                                            >
-                                                <td style={{
-                                                    borderRight : "solid",
-                                                }}>
-                                                    <MathRenderer
-                                                        math={transition.srcState}
-                                                        block={false}
-                                                    />
-                                                </td>
-                                                {
-                                                    transition.dstStateSets.map((dstStateSet, index) => {
-                                                        return <td key={index}>
-                                                            <MathRenderer
-                                                                math={`\\{ ${dstStateSet.join(", ")} \\}`}
-                                                                block={false}
-                                                            />
-                                                        </td>;
-                                                    })
-                                                }
-                                            </tr>
+                                            prunedTransitions.some(p => p.srcState == t.srcState) ?
+                                            `\\colorbox{red}{\\(${t.srcState}\\)}` :
+                                            t.srcState
                                         );
                                     })
-                                }
-                            </tbody>
-                        </table>
-                    </li>
-                    <li>
-                        <MathRenderer
-                            math={`q_1 = ${startState}`}
-                            block={false}
-                        />
-                    </li>
-                    <li>
-                        <MathRenderer
-                            math={`F = \\{ ${acceptStates
-                                .filter(acceptState => acceptState != "DNE")
-                                .map(acceptState => {
-                                    return (
-                                        (
-                                            prunedTransitions.some(p => p.srcState == acceptState) ||
-                                            !transitions.some(t => t.srcState == acceptState)
-                                        ) ?
-                                        `\\colorbox{red}{\\(${acceptState}\\)}` :
-                                        acceptState
-                                    );
-                                })
-                                .join(", ")
-                            } \\}`}
-                            block={false}
-                        />
-                    </li>
-                </ul>
-            </div>
-        );
+                                    .join(", ")
+                                } \\}`}
+                                block={false}
+                            />
+                        </li>
+                        <li>
+                            <MathRenderer
+                                math={`\\Sigma = \\{ ${alphabet.join(", ")} \\}`}
+                                block={false}
+                            />
+                        </li>
+                        <li>
+                            <MathRenderer
+                                math={`\\delta =`}
+                                block={false}
+                            />
+                            <table cellPadding={5} style={{
+                                borderCollapse : "collapse",
+                                textAlign : "center",
+                            }}>
+                                <thead>
+                                    <tr style={{
+                                        borderBottom : "solid",
+                                    }}>
+                                        <th style={{
+                                            borderRight : "solid",
+                                        }}>
+
+                                        </th>
+                                        {
+                                            [...alphabet, "ε"].map(letter => {
+                                                return <th key={letter}>{letter}</th>;
+                                            })
+                                        }
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {
+                                        transitions.map(transition => {
+                                            return (
+                                                <tr
+                                                    key={transition.srcState}
+                                                    style={{
+                                                        backgroundColor : (
+                                                            prunedTransitions.includes(transition) ?
+                                                            "red" :
+                                                            undefined
+                                                        )
+                                                    }}
+                                                >
+                                                    <td style={{
+                                                        borderRight : "solid",
+                                                    }}>
+                                                        <MathRenderer
+                                                            math={transition.srcState}
+                                                            block={false}
+                                                        />
+                                                    </td>
+                                                    {
+                                                        transition.dstStateSets.map((dstStateSet, index) => {
+                                                            return <td key={index}>
+                                                                <MathRenderer
+                                                                    math={`\\{ ${dstStateSet.join(", ")} \\}`}
+                                                                    block={false}
+                                                                />
+                                                            </td>;
+                                                        })
+                                                    }
+                                                </tr>
+                                            );
+                                        })
+                                    }
+                                </tbody>
+                            </table>
+                        </li>
+                        <li>
+                            <MathRenderer
+                                math={`q_1 = ${startState}`}
+                                block={false}
+                            />
+                        </li>
+                        <li>
+                            <MathRenderer
+                                math={`F = \\{ ${acceptStates
+                                    .filter(acceptState => acceptState != "DNE")
+                                    .map(acceptState => {
+                                        return (
+                                            (
+                                                prunedTransitions.some(p => p.srcState == acceptState) ||
+                                                !transitions.some(t => t.srcState == acceptState)
+                                            ) ?
+                                            `\\colorbox{red}{\\(${acceptState}\\)}` :
+                                            acceptState
+                                        );
+                                    })
+                                    .join(", ")
+                                } \\}`}
+                                block={false}
+                            />
+                        </li>
+                    </ul>
+                </div>
+            );
+        }
+        return this.formalJsx;
     }
 
     private renderMarkdown (prune : boolean) {
@@ -699,6 +714,24 @@ export class Nfa extends Component<NfaProps, NfaState> {
             }}
             value={json}
         ></textarea>;
+    }
+
+    private renderDfa (prune : boolean) {
+        if (
+            this.state.displayType == NfaDisplayType.Dfa &&
+            this.dfaJsx == undefined
+        ) {
+            const nfa = (
+                prune ?
+                NfaUtil.removeInvalidTransitions(this.state.nfa) :
+                this.state.nfa
+            );
+            const dfa = DfaUtil.fromNfa(nfa);
+
+            this.dfaJsx = <Dfa dfa={dfa}/>;
+        }
+
+        return this.dfaJsx;
     }
 
     public render () {
@@ -802,6 +835,15 @@ export class Nfa extends Component<NfaProps, NfaState> {
                 >
                     {this.renderJson(true)}
                 </div>
+                <div
+                    style={{
+                        display : this.state.displayType == NfaDisplayType.Dfa ?
+                            "block" :
+                            "none"
+                    }}
+                >
+                    {this.renderDfa(true)}
+                </div>
                 <div className="ui icon buttons">
                     <select className="ui huge button" onChange={(e) => {
                         if (
@@ -823,6 +865,7 @@ export class Nfa extends Component<NfaProps, NfaState> {
                         <option value={NfaDisplayType.Formal}>Formal</option>
                         <option value={NfaDisplayType.Markdown}>Markdown</option>
                         <option value={NfaDisplayType.Json}>Json</option>
+                        <option value={NfaDisplayType.Dfa}>Dfa</option>
                     </select>
                 </div>
                 <br/>
