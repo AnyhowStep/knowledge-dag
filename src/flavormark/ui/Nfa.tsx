@@ -726,7 +726,10 @@ export class Nfa extends Component<NfaProps, NfaState> {
                 NfaUtil.removeInvalidTransitions(this.state.nfa) :
                 this.state.nfa
             );
-            const dfa = DfaUtil.fromNfa(nfa);
+            let dfa = DfaUtil.fromNfa(nfa);
+            if (prune) {
+                dfa = DfaUtil.removeInvalidTransitions(dfa);
+            }
 
             this.dfaJsx = <Dfa dfa={dfa}/>;
         }

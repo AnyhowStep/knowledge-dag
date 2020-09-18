@@ -5,6 +5,7 @@ import * as nfa4 from "./nfa4.json";
 import * as nfa5 from "./nfa5.json";
 import * as nfa6 from "./nfa6.json";
 import * as nfa7 from "./nfa7.json";
+import * as nfa8 from "./nfa8.json";
 import {NfaDeclaration, NfaUtil} from "../../../../../dist/finite-automaton";
 
 export const nfaCollection : readonly NfaDeclaration[] = [
@@ -15,6 +16,7 @@ export const nfaCollection : readonly NfaDeclaration[] = [
     nfa5,
     nfa6,
     nfa7,
+    nfa8,
 ];
 
 export const language10Collection = nfaCollection.map(nfa => {

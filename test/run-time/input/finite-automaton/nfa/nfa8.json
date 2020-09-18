@@ -1,0 +1,140 @@
+{
+  "name": "N8",
+  "alphabet": [
+    "a",
+    "b"
+  ],
+  "startState": "\\ordered{1, q1}",
+  "acceptStates": [
+    "\\ordered{1, q4}"
+  ],
+  "transitions": [
+    {
+      "srcState": "\\ordered{1, q1}",
+      "dstStateSets": [
+        [],
+        [
+          "\\ordered{2, q1}",
+          "\\ordered{2, q2}"
+        ],
+        [
+          "\\ordered{3, q1}"
+        ]
+      ]
+    },
+    {
+      "srcState": "\\ordered{1, q3}",
+      "dstStateSets": [
+        [],
+        [
+          "\\ordered{2, q4}"
+        ],
+        [
+          "\\ordered{3, q3}"
+        ]
+      ]
+    },
+    {
+      "srcState": "\\ordered{1, q4}",
+      "dstStateSets": [
+        [],
+        [
+          "\\ordered{2, q4}"
+        ],
+        [
+          "\\ordered{3, q4}"
+        ]
+      ]
+    },
+    {
+      "srcState": "\\ordered{2, q1}",
+      "dstStateSets": [
+        [
+          "\\ordered{2, q1}",
+          "\\ordered{3, q1}"
+        ],
+        [
+          "\\ordered{3, q1}",
+          "\\ordered{3, q2}"
+        ],
+        []
+      ]
+    },
+    {
+      "srcState": "\\ordered{2, q2}",
+      "dstStateSets": [
+        [
+          "\\ordered{2, q3}",
+          "\\ordered{3, q3}"
+        ],
+        [],
+        [
+          "\\ordered{2, q3}"
+        ]
+      ]
+    },
+    {
+      "srcState": "\\ordered{2, q3}",
+      "dstStateSets": [
+        [],
+        [
+          "\\ordered{3, q4}"
+        ],
+        []
+      ]
+    },
+    {
+      "srcState": "\\ordered{2, q4}",
+      "dstStateSets": [
+        [
+          "\\ordered{2, q4}",
+          "\\ordered{3, q4}"
+        ],
+        [
+          "\\ordered{3, q4}"
+        ],
+        []
+      ]
+    },
+    {
+      "srcState": "\\ordered{3, q1}",
+      "dstStateSets": [
+        [
+          "\\ordered{1, q1}"
+        ],
+        [],
+        []
+      ]
+    },
+    {
+      "srcState": "\\ordered{3, q2}",
+      "dstStateSets": [
+        [
+          "\\ordered{1, q3}"
+        ],
+        [],
+        [
+          "\\ordered{3, q3}"
+        ]
+      ]
+    },
+    {
+      "srcState": "\\ordered{3, q3}",
+      "dstStateSets": [
+        [],
+        [],
+        []
+      ]
+    },
+    {
+      "srcState": "\\ordered{3, q4}",
+      "dstStateSets": [
+        [
+          "\\ordered{1, q4}"
+        ],
+        [],
+        []
+      ]
+    }
+  ]
+}
