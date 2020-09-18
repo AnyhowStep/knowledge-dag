@@ -31,11 +31,11 @@ function generateLanguageImpl (
         epsilonCheck,
     } : GenerateLanguageImplArgs
 ) : void {
-    if (nfa.acceptStates.includes(curState)) {
+    if (nfa.acceptStates.includes(curState) && word.length <= maxLength) {
         result.add(word.join(""));
     }
 
-    if (word.length >= maxLength) {
+    if (word.length > maxLength) {
         return;
     }
 

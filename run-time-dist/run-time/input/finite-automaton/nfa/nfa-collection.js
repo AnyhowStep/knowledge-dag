@@ -5,6 +5,9 @@ const nfa2 = require("./nfa2.json");
 const nfa3 = require("./nfa3.json");
 const nfa4 = require("./nfa4.json");
 const nfa5 = require("./nfa5.json");
+const nfa6 = require("./nfa6.json");
+const nfa7 = require("./nfa7.json");
+const nfa8 = require("./nfa8.json");
 const finite_automaton_1 = require("../../../../../dist/finite-automaton");
 exports.nfaCollection = [
     nfa1,
@@ -12,6 +15,9 @@ exports.nfaCollection = [
     nfa3,
     nfa4,
     nfa5,
+    nfa6,
+    nfa7,
+    nfa8,
 ];
 exports.language10Collection = exports.nfaCollection.map(nfa => {
     return {

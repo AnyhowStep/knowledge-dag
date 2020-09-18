@@ -18,8 +18,8 @@ tape(__filename, (t) => {
             for (const word of language10_2) {
                 language10_1_2.add(word);
             }
-            t.true(nfa_collection_1.isSubSet(language10_3, language10_1_2), `${nfa1.name} \\cup ${nfa2.name} has extra values ${nfa_collection_1.findExtraValues(language10_3, language10_1_2).join(",")}`);
-            t.true(nfa_collection_1.isSubSet(language10_1_2, language10_3), `${nfa1.name} \\cup ${nfa2.name} has missing values ${nfa_collection_1.findExtraValues(language10_1_2, language10_3).join(",")}`);
+            t.true(nfa_collection_1.isSubSet(language10_3, language10_1_2), `${nfa1.name} \\cup ${nfa2.name} has extra values ${nfa_collection_1.findExtraValues(language10_3, language10_1_2).length}`);
+            t.true(nfa_collection_1.isSubSet(language10_1_2, language10_3), `${nfa1.name} \\cup ${nfa2.name} has missing values ${nfa_collection_1.findExtraValues(language10_1_2, language10_3).length}`);
         }
     }
     t.end();

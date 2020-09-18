@@ -1,66 +1,58 @@
 {
-    "name": "N3",
+    "name": "N7",
     "alphabet": [
         "a",
-        "b",
-        "c",
-        "d"
+        "b"
     ],
     "startState": "begin",
     "acceptStates": [
-        "accept"
+        "A"
     ],
     "transitions": [
         {
             "srcState": "begin",
             "dstStateSets": [
                 [
-                    "body"
+                    "A_0"
                 ],
                 [
-                    "begin"
-                ],
-                [
-                    "begin"
-                ],
-                [
-                    "begin"
+                    "A_1"
                 ],
                 []
             ]
         },
         {
-            "srcState": "body",
+            "srcState": "A",
             "dstStateSets": [
                 [
-                    "accept"
+                    "A_0"
                 ],
                 [
-                    "body"
-                ],
-                [
-                    "begin"
-                ],
-                [
-                    "body"
+                    "A_1"
                 ],
                 []
             ]
         },
         {
-            "srcState": "accept",
+            "srcState": "A_0",
             "dstStateSets": [
                 [
-                    "accept"
+                    "A"
                 ],
                 [
-                    "accept"
+                    "A"
+                ],
+                []
+            ]
+        },
+        {
+            "srcState": "A_1",
+            "dstStateSets": [
+                [
+                    "A"
                 ],
                 [
-                    "accept"
-                ],
-                [
-                    "accept"
+                    "A"
                 ],
                 []
             ]

@@ -1,8 +1,8 @@
 {
-    "name": "N4",
+    "name": "N6",
     "alphabet": [
-        "0",
-        "1"
+        "a",
+        "b"
     ],
     "startState": "begin",
     "acceptStates": [

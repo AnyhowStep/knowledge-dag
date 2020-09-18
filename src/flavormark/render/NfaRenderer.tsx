@@ -123,6 +123,36 @@ export class NfaRenderer extends ReactSubRenderer<NfaNode> {
             />;
         }
 
+        if (node.rawAlphabet.startsWith("concatenation:")) {
+            const names = node.rawAlphabet.replace("concatenation:", "").split(",").map(name => name.trim());
+            let nfa = this.nfaCollection.get(names[0]);
+            if (nfa == undefined) {
+                return <div style={{ color : "red" }}>
+                    No such NFA ${names[0]}
+                </div>;
+            }
+            for (let i=1; i<names.length; ++i) {
+                const other = this.nfaCollection.get(names[i]);
+                if (other == undefined) {
+                    return <div style={{ color : "red" }}>
+                        No such NFA ${names[i]}
+                    </div>;
+                }
+                nfa = NfaUtil.concatenation(nfa, other);
+            }
+
+            nfa = {
+                ...nfa,
+                name,
+            };
+            this.nfaCollection.set(name, nfa);
+
+            return <Nfa
+                nfa={nfa}
+                key={JSON.stringify(node.sourceRange)}
+            />;
+        }
+
         if (node.rawAlphabet.startsWith("remove-accept-cycle:")) {
             const name = node.rawAlphabet.replace("remove-accept-cycle:", "").trim();
             let nfa = this.nfaCollection.get(name);

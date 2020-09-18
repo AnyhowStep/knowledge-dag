@@ -6,6 +6,7 @@ let lastTestName = "";
 tape.createStream({ objectMode : true }).on("data", (row) => {
     if (row.type == "test") {
         lastTestName = row.name;
+        console.log(lastTestName);
     }
     if (row.ok === false) {
         if (row.name !== "test exited without ending") {
