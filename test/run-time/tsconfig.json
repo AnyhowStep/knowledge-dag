@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "outDir": "./dist",
+        "outDir": "../../run-time-dist",
         "sourceMap": true,
 
         "resolveJsonModule": true,

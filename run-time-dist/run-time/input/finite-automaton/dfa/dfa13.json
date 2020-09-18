@@ -1,0 +1,88 @@
+{
+    "name": "c",
+    "alphabet": [
+        "0",
+        "1"
+    ],
+    "startState": "c_0",
+    "acceptStates": [
+        "c_{1\\_0}",
+        "c_{1\\_1}",
+        "c_{2\\_01}",
+        "c_{2\\_10}",
+        "c_{2\\_11}",
+        "c_3"
+    ],
+    "transitions": [
+        {
+            "srcState": "c_0",
+            "dstStates": [
+                "c_{skip}",
+                "c_{skip}"
+            ]
+        },
+        {
+            "srcState": "c_{skip}",
+            "dstStates": [
+                "c_{skip_1}",
+                "c_{skip_1}"
+            ]
+        },
+        {
+            "srcState": "c_{skip_1}",
+            "dstStates": [
+                "c_{1\\_0}",
+                "c_{1\\_1}"
+            ]
+        },
+        {
+            "srcState": "c_{1\\_0}",
+            "dstStates": [
+                "c_{fail}",
+                "c_{2\\_01}"
+            ]
+        },
+        {
+            "srcState": "c_{1\\_1}",
+            "dstStates": [
+                "c_{2\\_10}",
+                "c_{2\\_11}"
+            ]
+        },
+        {
+            "srcState": "c_{2\\_01}",
+            "dstStates": [
+                "c_{fail}",
+                "c_3"
+            ]
+        },
+        {
+            "srcState": "c_{2\\_10}",
+            "dstStates": [
+                "c_{fail}",
+                "c_3"
+            ]
+        },
+        {
+            "srcState": "c_{2\\_11}",
+            "dstStates": [
+                "c_3",
+                "c_3"
+            ]
+        },
+        {
+            "srcState": "c_3",
+            "dstStates": [
+                "c_{1\\_0}",
+                "c_{1\\_1}"
+            ]
+        },
+        {
+            "srcState": "c_{fail}",
+            "dstStates": [
+                "c_{fail}",
+                "c_{fail}"
+            ]
+        }
+    ]
+}

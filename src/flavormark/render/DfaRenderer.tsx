@@ -12,7 +12,7 @@ export class DfaRenderer extends ReactSubRenderer<DfaNode> {
     private lastStart = -1;
     private dfaCollection = new Map<string, DfaDeclaration>();
 
-    public render (node : DfaNode) : React.ReactNode {
+    public renderImpl (node : DfaNode) : React.ReactNode {
         if (node.sourceRange == undefined || node.sourceRange.start.row < this.lastStart) {
             this.dfaCollection.clear();
             this.lastStart = node.sourceRange == undefined ? -1 : node.sourceRange.start.row;
@@ -132,6 +132,10 @@ export class DfaRenderer extends ReactSubRenderer<DfaNode> {
             const srcState = rawSrcState.trim();
             const dstStates = rawDstStates.map(dstState => dstState.trim());
 
+            if (dstStates.length < alphabet.length) {
+                throw new Error(`DFA must have transition for all letters of alphabet`);
+            }
+
             return {
                 srcState,
                 dstStates,
@@ -151,5 +155,13 @@ export class DfaRenderer extends ReactSubRenderer<DfaNode> {
             dfa={dfa}
             key={JSON.stringify(node.sourceRange)}
         />;
+    }
+
+    public render (node : DfaNode) : React.ReactNode {
+        try {
+            return this.renderImpl(node);
+        } catch (err) {
+            return <span style={{ color : "red" }}>{err.message}</span>;
+        }
     }
 }

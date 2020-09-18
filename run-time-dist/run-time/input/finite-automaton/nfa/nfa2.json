@@ -1,0 +1,60 @@
+{
+    "name": "N2",
+    "alphabet": [
+        "a",
+        "b"
+    ],
+    "startState": "q1",
+    "acceptStates": [
+        "q4"
+    ],
+    "transitions": [
+        {
+            "srcState": "q1",
+            "dstStateSets": [
+                [
+                    "q1"
+                ],
+                [
+                    "q1",
+                    "q2"
+                ],
+                []
+            ]
+        },
+        {
+            "srcState": "q2",
+            "dstStateSets": [
+                [
+                    "q3"
+                ],
+                [],
+                [
+                    "q3"
+                ]
+            ]
+        },
+        {
+            "srcState": "q3",
+            "dstStateSets": [
+                [],
+                [
+                    "q4"
+                ],
+                []
+            ]
+        },
+        {
+            "srcState": "q4",
+            "dstStateSets": [
+                [
+                    "q4"
+                ],
+                [
+                    "q4"
+                ],
+                []
+            ]
+        }
+    ]
+}

@@ -1,0 +1,61 @@
+{
+  "name": "N7",
+  "alphabet": [
+    "a",
+    "b"
+  ],
+  "startState": "begin",
+  "acceptStates": [
+    "A"
+  ],
+  "transitions": [
+    {
+      "srcState": "begin",
+      "dstStateSets": [
+        [
+          "A_0"
+        ],
+        [
+          "A_1"
+        ],
+        []
+      ]
+    },
+    {
+      "srcState": "A",
+      "dstStateSets": [
+        [
+          "A_0"
+        ],
+        [
+          "A_1"
+        ],
+        []
+      ]
+    },
+    {
+      "srcState": "A_0",
+      "dstStateSets": [
+        [
+          "A"
+        ],
+        [
+          "A"
+        ],
+        []
+      ]
+    },
+    {
+      "srcState": "A_1",
+      "dstStateSets": [
+        [
+          "A"
+        ],
+        [
+          "A"
+        ],
+        []
+      ]
+    }
+  ]
+}

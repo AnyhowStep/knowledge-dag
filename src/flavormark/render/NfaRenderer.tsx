@@ -1,7 +1,8 @@
 import {ReactSubRenderer} from "./ReactSubRenderer";
 import * as React from "react";
 import {NfaNode} from "../block/NfaNode";
-import {Nfa, NfaDeclaration, nfaIntersection, nfaUnion} from "../ui";
+import {Nfa} from "../ui";
+import {NfaDeclaration, NfaUtil} from "../../finite-automaton";
 
 function toDstStateSet (str : string) : string[] {
     const result : string[] = [];
@@ -77,7 +78,7 @@ export class NfaRenderer extends ReactSubRenderer<NfaNode> {
                         No such NFA ${names[i]}
                     </div>;
                 }
-                nfa = nfaUnion(nfa, other);
+                nfa = NfaUtil.union(nfa, other);
             }
 
             nfa = {
@@ -107,13 +108,57 @@ export class NfaRenderer extends ReactSubRenderer<NfaNode> {
                         No such NFA ${names[i]}
                     </div>;
                 }
-                nfa = nfaIntersection(nfa, other);
+                nfa = NfaUtil.intersection(nfa, other);
             }
 
             nfa = {
                 ...nfa,
                 name,
             };
+            this.nfaCollection.set(name, nfa);
+
+            return <Nfa
+                nfa={nfa}
+                key={JSON.stringify(node.sourceRange)}
+            />;
+        }
+
+        if (node.rawAlphabet.startsWith("remove-accept-cycle:")) {
+            const name = node.rawAlphabet.replace("remove-accept-cycle:", "").trim();
+            let nfa = this.nfaCollection.get(name);
+            if (nfa == undefined) {
+                return <div style={{ color : "red" }}>
+                    No such NFA ${name}
+                </div>;
+            }
+            nfa = NfaUtil.removeAcceptCycles(nfa);
+            nfa = {
+                ...nfa,
+                name,
+            };
+
+            this.nfaCollection.set(name, nfa);
+
+            return <Nfa
+                nfa={nfa}
+                key={JSON.stringify(node.sourceRange)}
+            />;
+        }
+
+        if (node.rawAlphabet.startsWith("remove-invalid-transition:")) {
+            const name = node.rawAlphabet.replace("remove-invalid-transition:", "").trim();
+            let nfa = this.nfaCollection.get(name);
+            if (nfa == undefined) {
+                return <div style={{ color : "red" }}>
+                    No such DFA ${name}
+                </div>;
+            }
+            nfa = NfaUtil.removeInvalidTransitions(nfa);
+            nfa = {
+                ...nfa,
+                name,
+            };
+
             this.nfaCollection.set(name, nfa);
 
             return <Nfa
@@ -129,6 +174,10 @@ export class NfaRenderer extends ReactSubRenderer<NfaNode> {
             const [rawSrcState, ...rawDstStateSets] = line.split("|");
             const srcState = rawSrcState.trim();
             const dstStateSets = rawDstStateSets.map(dstStateSet => toDstStateSet(dstStateSet));
+
+            while (dstStateSets.length < alphabet.length + 1) {
+                dstStateSets.push([]);
+            }
 
             return {
                 srcState,

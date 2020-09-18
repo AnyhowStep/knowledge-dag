@@ -1,0 +1,27 @@
+{
+    "name": "rn2",
+    "alphabet": [
+        "0",
+        "1"
+    ],
+    "startState": "b0",
+    "acceptStates": [
+        "b1"
+    ],
+    "transitions": [
+        {
+            "srcState": "b0",
+            "dstStates": [
+                "b0",
+                "b1"
+            ]
+        },
+        {
+            "srcState": "b1",
+            "dstStates": [
+                "b1",
+                "b0"
+            ]
+        }
+    ]
+}

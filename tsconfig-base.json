@@ -28,6 +28,7 @@
         "noErrorTruncation": true,
 
         "strict": true,
+        "strictNullChecks": true,
 
         "module": "commonjs",
         "moduleResolution": "node",

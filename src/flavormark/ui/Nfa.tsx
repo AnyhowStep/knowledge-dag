@@ -4,6 +4,7 @@ import {MathRenderer} from "./MathRenderer";
 import {getMathJax} from "../interop/MathJax";
 import "vis/dist/vis.min.css";
 import * as vis from "vis";
+import {NfaUtil, NfaDeclaration} from "../../finite-automaton";
 
 const brightColors = [
     //"#800000", //Maroon
@@ -140,52 +141,6 @@ function mj2img (input : string, color : string, isAccept : boolean) : Promise<{
     });
 }
 
-export interface NfaDeclaration {
-    readonly name : string,
-    readonly alphabet : readonly string[],
-    readonly startState : string,
-    readonly acceptStates : readonly string[],
-    readonly transitions : readonly {
-        readonly srcState : string,
-        readonly dstStateSets : readonly (readonly string[])[]
-    }[],
-}
-
-function isFailState (acceptStates : readonly string[], t : NfaDeclaration["transitions"][number]) {
-    return (
-        !acceptStates.includes(t.srcState) &&
-        t.dstStateSets.every(
-            dstStateSet => dstStateSet.every(dstState => dstState == t.srcState)
-        )
-    );
-}
-
-/**
- * Assumes both NFAs have the same alphabet.
- *
- * @todo Union both alphabets
- */
-export function nfaUnion (nfa1 : NfaDeclaration, nfa2 : NfaDeclaration) : NfaDeclaration {
-    const startState = `(${nfa1.name} \\cup ${nfa2.name})_{start}`;
-
-    const dstStateSets : string[][] = nfa1.alphabet.map(() => []);
-    dstStateSets.push([nfa1.startState, nfa2.startState]);
-
-    return {
-        name : `${nfa1.name} \\cup ${nfa2.name}`,
-        alphabet : nfa1.alphabet,
-        startState,
-        acceptStates : [...nfa1.acceptStates, ...nfa2.acceptStates],
-        transitions : [
-            {
-                srcState : startState,
-                dstStateSets,
-            },
-            ...nfa1.transitions,
-            ...nfa2.transitions,
-        ],
-    };
-}
 /*
 Need to handle epsilon-transitions
 export function nfaUnion2 (nfa1 : NfaDeclaration, nfa2 : NfaDeclaration) : NfaDeclaration {
@@ -283,206 +238,13 @@ export function nfaUnion2 (nfa1 : NfaDeclaration, nfa2 : NfaDeclaration) : NfaDe
     };
 }
 */
-export function nfaIntersection (nfa1 : NfaDeclaration, nfa2 : NfaDeclaration) : NfaDeclaration {
-    const fail1 = nfa1.transitions.filter(t => isFailState(nfa1.acceptStates, t));
-    const fail2 = nfa2.transitions.filter(t => isFailState(nfa2.acceptStates, t));
-
-    const alphabet = [...nfa1.alphabet];
-    for (const a2 of nfa2.alphabet) {
-        if (!alphabet.includes(a2)) {
-            alphabet.push(a2);
-        }
-    }
-
-    const startState = `\\ordered{${nfa1.startState}, ${nfa2.startState}}`;
-
-    const acceptStates : string[] = [];
-    for (const a1 of nfa1.acceptStates) {
-        for (const a2 of nfa2.acceptStates) {
-            acceptStates.push(`\\ordered{${a1}, ${a2}}`);
-        }
-    }
-
-    const transitions : {
-        readonly srcState : string,
-        readonly dstStateSets : readonly (readonly string[])[]
-    }[] = [];
-    for (const t1 of nfa1.transitions) {
-        for (const t2 of nfa2.transitions) {
-            const srcState = `\\ordered{${t1.srcState}, ${t2.srcState}}`;
-            const dstStateSets : (readonly string[])[] = [];
-
-            for (const letter of alphabet) {
-                const index1 = nfa1.alphabet.indexOf(letter);
-                const index2 = nfa2.alphabet.indexOf(letter);
-
-                if (index1 < 0 || index2 < 0) {
-                    //TODO reject
-                    continue;
-                }
-
-                const dstStateSet : string[] = [];
-
-                const dstSet1 = t1.dstStateSets[index1];
-                const dstSet2 = t2.dstStateSets[index2];
-
-                for (const dst1 of dstSet1) {
-                    for (const dst2 of dstSet2) {
-                        if (
-                            fail1.length > 0 &&
-                            fail2.length > 0 &&
-                            (
-                                fail1.some(t => t.srcState == dst1) ||
-                                fail2.some(t => t.srcState == dst2)
-                            )
-                        ) {
-                            dstStateSet.push(`\\ordered{${fail1[0].srcState}, ${fail2[0].srcState}}`);
-                        } else {
-                            dstStateSet.push(`\\ordered{${dst1}, ${dst2}}`);
-                        }
-                    }
-                }
-
-                dstStateSets.push(dstStateSet);
-            }
-
-            const epsilonStateSet : string[] = [];
-            const epsilonSet1 = t1.dstStateSets[nfa1.alphabet.length];
-            const epsilonSet2 = t2.dstStateSets[nfa2.alphabet.length];
-
-            if (epsilonSet1.length > 0) {
-                if (epsilonSet2.length > 0) {
-                    //Transition both
-                    for (const dst1 of epsilonSet1) {
-                        for (const dst2 of epsilonSet2) {
-                            if (
-                                fail1.length > 0 &&
-                                fail2.length > 0 &&
-                                (
-                                    fail1.some(t => t.srcState == dst1) ||
-                                    fail2.some(t => t.srcState == dst2)
-                                )
-                            ) {
-                                epsilonStateSet.push(`\\ordered{${fail1[0].srcState}, ${fail2[0].srcState}}`);
-                            } else {
-                                epsilonStateSet.push(`\\ordered{${dst1}, ${dst2}}`);
-                            }
-                        }
-                    }
-                } else {
-                    //Only transition 1
-                    const dst2 = t2.srcState;
-                    for (const dst1 of epsilonSet1) {
-                        if (
-                            fail1.length > 0 &&
-                            fail2.length > 0 &&
-                            (
-                                fail1.some(t => t.srcState == dst1) ||
-                                fail2.some(t => t.srcState == dst2)
-                            )
-                        ) {
-                            epsilonStateSet.push(`\\ordered{${fail1[0].srcState}, ${fail2[0].srcState}}`);
-                        } else {
-                            epsilonStateSet.push(`\\ordered{${dst1}, ${dst2}}`);
-                        }
-                    }
-                }
-            } else {
-                if (epsilonSet2.length > 0) {
-                    //Only transition 2
-                    const dst1 = t1.srcState;
-                    for (const dst2 of epsilonSet2) {
-                        if (
-                            fail1.length > 0 &&
-                            fail2.length > 0 &&
-                            (
-                                fail1.some(t => t.srcState == dst1) ||
-                                fail2.some(t => t.srcState == dst2)
-                            )
-                        ) {
-                            epsilonStateSet.push(`\\ordered{${fail1[0].srcState}, ${fail2[0].srcState}}`);
-                        } else {
-                            epsilonStateSet.push(`\\ordered{${dst1}, ${dst2}}`);
-                        }
-                    }
-                } else {
-                    //Do nothing
-                }
-            }
-            dstStateSets.push(epsilonStateSet);
-
-            transitions.push({
-                srcState,
-                dstStateSets,
-            });
-        }
-    }
-
-    return {
-        name : `${nfa1.name} \\cap ${nfa2.name}`,
-        alphabet,
-        startState,
-        acceptStates,
-        transitions,
-    };
-}
-
-function getValidTransitions2Impl (
-    cur : string,
-    transitions : Map<string, NfaDeclaration["transitions"][number]>,
-    validStates : Set<string>
-) {
-    if (validStates.has(cur)) {
-        return;
-    }
-    validStates.add(cur);
-
-    const transition = transitions.get(cur);
-    if (transition == undefined) {
-        return;
-    }
-
-    for (const dstStateSet of transition.dstStateSets) {
-        for (const dstState of dstStateSet) {
-            getValidTransitions2Impl(
-                dstState,
-                transitions,
-                validStates
-            );
-        }
-    }
-}
-
-function getValidTransitions2 (
-    startState : string,
-    transitions : NfaDeclaration["transitions"]
-) : NfaDeclaration["transitions"] {
-    const validStates = new Set<string>();
-
-    const map = new Map<string, NfaDeclaration["transitions"][number]>();
-    for (const t of transitions) {
-        map.set(t.srcState, t);
-    }
-
-    getValidTransitions2Impl(
-        startState,
-        map,
-        validStates
-    );
-
-    return transitions.filter(t => validStates.has(t.srcState));
-}
-
-function getInvalidTransitions2 (startState : string, transitions : NfaDeclaration["transitions"]) {
-    const valid = getValidTransitions2(startState, transitions);
-    return transitions.filter(t => !valid.includes(t));
-}
 
 export enum NfaDisplayType {
     Graph,
     EnlargedGraph,
     Formal,
     Markdown,
+    Json,
 }
 
 export interface NfaProps {
@@ -575,10 +337,8 @@ export class Nfa extends Component<NfaProps, NfaState> {
             alphabet,
             startState,
             acceptStates,
-        } = this.state.nfa;
-
-        //prune states that do not have incoming edges
-        const transitions = getValidTransitions2(startState, this.state.nfa.transitions);
+            transitions,
+        } = NfaUtil.removeInvalidTransitions(this.state.nfa);
 
         const nodes = new vis.DataSet<NfaNode>();
         const edges = new vis.DataSet<NfaEdge>();
@@ -756,7 +516,7 @@ export class Nfa extends Component<NfaProps, NfaState> {
         } = this.state.nfa;
 
         //prune states that do not have incoming edges
-        const prunedTransitions = getInvalidTransitions2(startState, transitions);
+        const prunedTransitions = NfaUtil.getInvalidTransitions(startState, transitions);
 
         return (
             <div>
@@ -890,7 +650,7 @@ export class Nfa extends Component<NfaProps, NfaState> {
         } = this.state.nfa;
 
         //prune states that do not have incoming edges
-        const prunedTransitions = getInvalidTransitions2(startState, transitions);
+        const prunedTransitions = NfaUtil.getInvalidTransitions(startState, transitions);
 
         const lines : string[] = [];
         lines.push(`|Nfa| ${name}`);
@@ -921,6 +681,24 @@ export class Nfa extends Component<NfaProps, NfaState> {
                 width : "100%",
             }}
         >{lines.join("\n")}</textarea>;
+    }
+
+    private renderJson (prune : boolean) {
+        const nfa = (
+            prune ?
+            NfaUtil.removeInvalidTransitions(this.state.nfa) :
+            this.state.nfa
+        );
+
+        const json = JSON.stringify(nfa, null, 2);
+
+        return <textarea
+            rows={json.split("\n").length + 2}
+            style={{
+                width : "100%",
+            }}
+            value={json}
+        ></textarea>;
     }
 
     public render () {
@@ -1015,6 +793,15 @@ export class Nfa extends Component<NfaProps, NfaState> {
                 >
                     {this.renderMarkdown(true)}
                 </div>
+                <div
+                    style={{
+                        display : this.state.displayType == NfaDisplayType.Json ?
+                            "block" :
+                            "none"
+                    }}
+                >
+                    {this.renderJson(true)}
+                </div>
                 <div className="ui icon buttons">
                     <select className="ui huge button" onChange={(e) => {
                         if (
@@ -1035,6 +822,7 @@ export class Nfa extends Component<NfaProps, NfaState> {
                         <option value={NfaDisplayType.EnlargedGraph}>Enlarged Graph</option>
                         <option value={NfaDisplayType.Formal}>Formal</option>
                         <option value={NfaDisplayType.Markdown}>Markdown</option>
+                        <option value={NfaDisplayType.Json}>Json</option>
                     </select>
                 </div>
                 <br/>

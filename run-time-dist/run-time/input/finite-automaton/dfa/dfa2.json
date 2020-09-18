@@ -1,0 +1,41 @@
+{
+    "name": "N",
+    "alphabet": [
+        "0",
+        "1"
+    ],
+    "startState": "E",
+    "acceptStates": [
+        "H"
+    ],
+    "transitions": [
+        {
+            "srcState": "E",
+            "dstStates": [
+                "F",
+                "E"
+            ]
+        },
+        {
+            "srcState": "F",
+            "dstStates": [
+                "G",
+                "E"
+            ]
+        },
+        {
+            "srcState": "G",
+            "dstStates": [
+                "H",
+                "E"
+            ]
+        },
+        {
+            "srcState": "H",
+            "dstStates": [
+                "H",
+                "H"
+            ]
+        }
+    ]
+}

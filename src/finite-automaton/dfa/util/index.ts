@@ -7,7 +7,6 @@ export * from "./generate-language";
 export * from "./get-valid-transitions";
 export * from "./intersection";
 export * from "./is-fail-state";
-export * from "./merge-alphabet";
 export * from "./new-state-name";
 export * from "./remove-accept-cycles";
 export * from "./remove-invalid-transitions";

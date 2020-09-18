@@ -4,7 +4,7 @@ import {MathRenderer} from "./MathRenderer";
 import {getMathJax} from "../interop/MathJax";
 import "vis/dist/vis.min.css";
 import * as vis from "vis";
-import {DfaUtil} from "../../../dist/finite-automaton";
+import {DfaUtil, DfaDeclaration} from "../../finite-automaton";
 
 const brightColors = [
     //"#800000", //Maroon
@@ -139,17 +139,6 @@ function mj2img (input : string, color : string, isAccept : boolean) : Promise<{
             })
             .catch(reject);
     });
-}
-
-export interface DfaDeclaration {
-    readonly name : string,
-    readonly alphabet : readonly string[],
-    readonly startState : string,
-    readonly acceptStates : readonly string[],
-    readonly transitions : readonly {
-        readonly srcState : string,
-        readonly dstStates : readonly string[]
-    }[],
 }
 
 export enum DfaDisplayType {

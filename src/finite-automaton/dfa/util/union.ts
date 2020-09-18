@@ -1,15 +1,15 @@
 import {DfaDeclaration} from "../dfa-declaration";
-import {mergeAlphabet} from "./merge-alphabet";
 import {extendAlphabet} from "./extend-alphabet";
 import {findFailStates} from "./find-fail-states";
 import {ensureDifferentStates} from "./ensure-different-states";
+import {AlphabetUtil} from "../../alphabet";
 
 export function union (dfa1 : DfaDeclaration, dfa2 : DfaDeclaration) : DfaDeclaration {
     const ensureDifferentStatesResult = ensureDifferentStates(dfa1, dfa2);
     dfa1 = ensureDifferentStatesResult.dfa1;
     dfa2 = ensureDifferentStatesResult.dfa2;
 
-    const alphabet = mergeAlphabet(dfa1.alphabet, dfa2.alphabet);
+    const alphabet = AlphabetUtil.mergeAlphabet(dfa1.alphabet, dfa2.alphabet);
 
     dfa1 = extendAlphabet(dfa1, alphabet);
     dfa2 = extendAlphabet(dfa2, alphabet);

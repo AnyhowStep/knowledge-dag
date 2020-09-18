@@ -1,0 +1,105 @@
+{
+  "name": "N4",
+  "alphabet": [
+    "0",
+    "1"
+  ],
+  "startState": "begin",
+  "acceptStates": [
+    "A_{start}"
+  ],
+  "transitions": [
+    {
+      "srcState": "begin",
+      "dstStateSets": [
+        [],
+        [],
+        [
+          "A_{accept0}",
+          "A_{accept1}",
+          "A_{accept2}"
+        ]
+      ]
+    },
+    {
+      "srcState": "A_{start}",
+      "dstStateSets": [
+        [],
+        [],
+        []
+      ]
+    },
+    {
+      "srcState": "A_{body0}",
+      "dstStateSets": [
+        [
+          "A_{start}"
+        ],
+        [
+          "A_{start}"
+        ],
+        []
+      ]
+    },
+    {
+      "srcState": "A_{body1}",
+      "dstStateSets": [
+        [
+          "A_{start}"
+        ],
+        [
+          "A_{start}"
+        ],
+        []
+      ]
+    },
+    {
+      "srcState": "A_{body2}",
+      "dstStateSets": [
+        [
+          "A_{start}"
+        ],
+        [
+          "A_{start}"
+        ],
+        []
+      ]
+    },
+    {
+      "srcState": "A_{accept0}",
+      "dstStateSets": [
+        [
+          "A_{body0}"
+        ],
+        [
+          "A_{body0}"
+        ],
+        []
+      ]
+    },
+    {
+      "srcState": "A_{accept1}",
+      "dstStateSets": [
+        [
+          "A_{body1}"
+        ],
+        [
+          "A_{body1}"
+        ],
+        []
+      ]
+    },
+    {
+      "srcState": "A_{accept2}",
+      "dstStateSets": [
+        [
+          "A_{body2}"
+        ],
+        [
+          "A_{body2}"
+        ],
+        []
+      ]
+    }
+  ]
+}
