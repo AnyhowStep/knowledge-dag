@@ -147,6 +147,7 @@ export enum DfaDisplayType {
     Formal,
     Markdown,
     Json,
+    Language10,
 }
 
 export interface DfaProps {
@@ -159,6 +160,7 @@ export interface DfaState {
 
 export class Dfa extends Component<DfaProps, DfaState> {
     private formalJsx : JSX.Element|undefined = undefined;
+    private language10Jsx : JSX.Element|undefined = undefined;
 
     public constructor (props : DfaProps) {
         super(props);
@@ -167,6 +169,7 @@ export class Dfa extends Component<DfaProps, DfaState> {
             displayType : DfaDisplayType.Graph,
         };
         this.formalJsx = undefined;
+        this.language10Jsx = undefined;
     }
     public componentWillReceiveProps (newProps : DfaProps) {
         this.setState({
@@ -174,6 +177,7 @@ export class Dfa extends Component<DfaProps, DfaState> {
             displayType : DfaDisplayType.Graph,
         });
         this.formalJsx = undefined;
+        this.language10Jsx = undefined;
     }
 
     private graphContainer : HTMLElement|null = null;
@@ -574,6 +578,29 @@ export class Dfa extends Component<DfaProps, DfaState> {
         ></textarea>;
     }
 
+    private renderLanguage10 () {
+        if (
+            this.state.displayType == DfaDisplayType.Language10 &&
+            this.language10Jsx == undefined
+        ) {
+            const dfa = DfaUtil.removeInvalidTransitions(this.state.dfa);
+            const language10 = DfaUtil.generateLanguage({
+                dfa,
+                maxLength : 10,
+            });
+
+            this.language10Jsx = <textarea
+                rows={Math.floor(language10.size / 7)+2}
+                style={{
+                    width : "100%",
+                }}
+                value={[...language10].map(s => JSON.stringify(s)).join(", ")}
+            />;
+        }
+
+        return this.language10Jsx;
+    }
+
     public render () {
         return (
             <div>
@@ -675,6 +702,15 @@ export class Dfa extends Component<DfaProps, DfaState> {
                 >
                     {this.renderJson(true)}
                 </div>
+                <div
+                    style={{
+                        display : this.state.displayType == DfaDisplayType.Language10 ?
+                            "block" :
+                            "none"
+                    }}
+                >
+                    {this.renderLanguage10()}
+                </div>
                 <div className="ui icon buttons">
                     <select className="ui huge button" onChange={(e) => {
                         if (
@@ -696,6 +732,7 @@ export class Dfa extends Component<DfaProps, DfaState> {
                         <option value={DfaDisplayType.Formal}>Formal</option>
                         <option value={DfaDisplayType.Markdown}>Markdown</option>
                         <option value={DfaDisplayType.Json}>Json</option>
+                        <option value={DfaDisplayType.Language10}>Language10</option>
                     </select>
                 </div>
                 <br/>

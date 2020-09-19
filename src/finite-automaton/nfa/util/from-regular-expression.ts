@@ -2,6 +2,7 @@ import {RegularExpressionDeclaration, RegularExpressionType, RegularExpressionUt
 import {NfaDeclaration} from "../nfa-declaration";
 import {concatenation} from "./concatenation";
 import {union} from "./union";
+import {removeTrivialEpsilonTransitions} from "./remove-trivial-epsilon-transitions";
 
 export function fromRegularExpression (
     regularExpression : RegularExpressionDeclaration,
@@ -10,7 +11,7 @@ export function fromRegularExpression (
     switch (regularExpression.regularExpressionType) {
         case RegularExpressionType.Parentheses: {
             return fromRegularExpression(
-                regularExpression.regularExpression,
+                regularExpression.subExpr,
                 getNextStateName
             );
         }
@@ -44,7 +45,7 @@ export function fromRegularExpression (
             const startState = getNextStateName();
             const acceptState = getNextStateName();
 
-            const subExpr = regularExpression.regularExpression;
+            const subExpr = regularExpression.subExpr;
 
             const nfa = fromRegularExpression(
                 subExpr,
@@ -60,7 +61,7 @@ export function fromRegularExpression (
                     {
                         srcState : startState,
                         dstStateSets : [
-                            [],
+                            ...nfa.alphabet.map(() => []),
                             [
                                 nfa.startState,
                                 acceptState,
@@ -70,7 +71,7 @@ export function fromRegularExpression (
                     {
                         srcState : acceptState,
                         dstStateSets : [
-                            [],
+                            ...nfa.alphabet.map(() => []),
                             [],
                         ],
                     },
@@ -101,40 +102,25 @@ export function fromRegularExpression (
             };
         }
         case RegularExpressionType.Concat: {
-            const nfa = regularExpression.regularExpressions.reduce<NfaDeclaration|undefined>(
-                (nfa, subExpr) => {
-                    if (nfa == undefined) {
-                        return fromRegularExpression(subExpr, getNextStateName);
-                    } else {
-                        return concatenation(nfa, fromRegularExpression(subExpr, getNextStateName));
-                    }
-                },
-                undefined
+            const lhs = fromRegularExpression(regularExpression.lhs, getNextStateName);
+            const rhs = fromRegularExpression(regularExpression.rhs, getNextStateName);
+            let nfa = concatenation(
+                lhs,
+                rhs
             );
-            if (nfa == undefined) {
-                //Or maybe we should allow it and define it to be the empty language?
-                throw new Error(`Cannot concat zero regular expressions`);
-            }
+            nfa = removeTrivialEpsilonTransitions(nfa);
             return {
                 name : RegularExpressionUtil.toString(regularExpression),
                 ...nfa,
             };
         }
         case RegularExpressionType.Union: {
-            const nfa = regularExpression.regularExpressions.reduce<NfaDeclaration|undefined>(
-                (nfa, subExpr) => {
-                    if (nfa == undefined) {
-                        return fromRegularExpression(subExpr, getNextStateName);
-                    } else {
-                        return union(nfa, fromRegularExpression(subExpr, getNextStateName));
-                    }
-                },
-                undefined
+            const lhs = fromRegularExpression(regularExpression.lhs, getNextStateName);
+            const rhs = fromRegularExpression(regularExpression.rhs, getNextStateName);
+            const nfa = union(
+                lhs,
+                rhs
             );
-            if (nfa == undefined) {
-                //Or maybe we should allow it and define it to be the empty language?
-                throw new Error(`Cannot union zero regular expressions`);
-            }
             return {
                 name : RegularExpressionUtil.toString(regularExpression),
                 ...nfa,

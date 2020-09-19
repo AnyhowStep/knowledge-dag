@@ -1,0 +1,227 @@
+import {RegularExpressionDeclaration, RegularExpressionType} from "../regular-expression-declaration";
+
+function consumeChar (str : string, state : { index : number }, expectedChar : string) {
+    if (str[state.index] == expectedChar) {
+        ++state.index;
+    }
+    throw new Error(`Expected ${expectedChar}`);
+}
+
+function tryConsumeChar (str : string, state : { index : number }, expectedChar : string) : boolean {
+    if (str[state.index] == expectedChar) {
+        ++state.index;
+        return true;
+    }
+    return false;
+}
+
+function consumeString (str : string, state : { index : number }, expectedString : string) {
+    for (const c of expectedString) {
+        consumeChar(str, state, c);
+    }
+}
+
+function tryConsumeString (str : string, state : { index : number }, expectedString : string) : boolean {
+    const initialIndex = state.index;
+    for (const c of expectedString) {
+        if (!tryConsumeChar(str, state, c)) {
+            state.index = initialIndex;
+            return false;
+        }
+    }
+    return true;
+}
+
+export function fromString (str : string, state : { index : number } = { index : 0 }) : RegularExpressionDeclaration {
+    let result : RegularExpressionDeclaration|undefined = undefined;
+
+    while (state.index < str.length) {
+        const c = str[state.index];
+        ++state.index;
+
+        if (/\s/.test(c)) {
+            continue;
+        }
+
+        if (c == ")") {
+            break;
+        } else if (c == "(") {
+            const subExpr = fromString(str, state);
+
+            consumeString(str, state, ")");
+
+            const parenthesized = {
+                regularExpressionType : RegularExpressionType.Parentheses,
+                regularExpression : subExpr,
+            } as const;
+            if (result == undefined) {
+                result = parenthesized;
+            } else {
+                if (result.regularExpressionType == RegularExpressionType.Concat) {
+                    result = {
+                        regularExpressionType : result.regularExpressionType,
+                        regularExpressions : [
+                            ...result.regularExpressions,
+                            parenthesized,
+                        ],
+                    };
+                } else {
+                    result = {
+                        regularExpressionType : RegularExpressionType.Concat,
+                        regularExpressions : [
+                            result,
+                            parenthesized,
+                        ],
+                    };
+                }
+            }
+        } else if (c == "*") {
+            if (result == undefined) {
+                throw new Error(`Cannot star without a regular expression`);
+            } else {
+                if (
+                    result.regularExpressionType == RegularExpressionType.Parentheses ||
+                    result.regularExpressionType == RegularExpressionType.Variable
+                ) {
+                    result = {
+                        regularExpressionType : RegularExpressionType.Star,
+                        regularExpression : result,
+                    };
+                } else if (
+                    result.regularExpressionType == RegularExpressionType.Star
+                ) {
+                    //Do nothing
+                } else  {
+                    const regularExpressions : RegularExpressionDeclaration[] = [...result.regularExpressions];
+                    const subExpr = regularExpressions.pop();
+                    if (subExpr == undefined) {
+                        throw new Error(`No subExpr to star`);
+                    }
+                    const star = {
+                        regularExpressionType : RegularExpressionType.Star,
+                        regularExpression : subExpr,
+                    } as const;
+                    result = {
+                        regularExpressionType : result.regularExpressionType,
+                        regularExpressions : [...regularExpressions, star],
+                    };
+                }
+            }
+        } else if (c == "\\") {
+            if (tryConsumeString(str, state, "circ")) {
+                if (result == undefined) {
+                    throw new Error(`Cannot concat without a regular expression`);
+                } else if (
+                    result.regularExpressionType == RegularExpressionType.Parentheses ||
+                    result.regularExpressionType == RegularExpressionType.Variable ||
+                    result.regularExpressionType == RegularExpressionType.Star
+                ) {
+                    result = {
+                        regularExpressionType : RegularExpressionType.Concat,
+                        regularExpressions : [result],
+                    };
+                } else if (
+                    result.regularExpressionType == RegularExpressionType.Concat
+                ) {
+                    //Do nothing
+                } else if (
+                    result.regularExpressionType == RegularExpressionType.Union
+                ) {
+                    const regularExpressions : RegularExpressionDeclaration[] = [...result.regularExpressions];
+                    const last = regularExpressions.pop();
+                    if (last == undefined) {
+                        throw new Error(`Empty union not allowed`);
+                    }
+
+                    result = {
+                        regularExpressionType : RegularExpressionType.Union,
+                        regularExpressions : [
+                            ...regularExpressions,
+                            ...(
+
+                                (
+                                    last.regularExpressionType == RegularExpressionType.Parentheses ||
+                                    last.regularExpressionType == RegularExpressionType.Variable ||
+                                    last.regularExpressionType == RegularExpressionType.Star
+                                ) ?
+                                [
+                                    {
+                                        regularExpressionType : RegularExpressionType.Concat,
+                                        regularExpressions : [
+                                            last,
+                                        ],
+                                    } as const
+                                ] :
+                                last.regularExpressionType == RegularExpressionType.Concat ?
+                                [last] :
+                                //TODO Should throw error here
+                                []
+                            )
+                        ],
+                    };
+                }
+            } else if (tryConsumeString(str, state, "cup")) {
+
+                if (result == undefined) {
+                    throw new Error(`Cannot union without a regular expression`);
+                } else if (
+                    result.regularExpressionType == RegularExpressionType.Parentheses ||
+                    result.regularExpressionType == RegularExpressionType.Variable ||
+                    result.regularExpressionType == RegularExpressionType.Star
+                ) {
+                    result = {
+                        regularExpressionType : RegularExpressionType.Union,
+                        regularExpressions : [result],
+                    };
+                } else if (
+                    result.regularExpressionType == RegularExpressionType.Concat
+                ) {
+                    result = {
+                        regularExpressionType : RegularExpressionType.Union,
+                        regularExpressions : [
+                            result,
+                        ],
+                    };
+                } else if (
+                    result.regularExpressionType == RegularExpressionType.Union
+                ) {
+                    //Do nothing
+                }
+            } else {
+                throw new Error(`Expected \\circ or \\cup`);
+            }
+        } else {
+            const variable = {
+                regularExpressionType : RegularExpressionType.Variable,
+                identifier : c,
+            } as const;
+            if (result == undefined) {
+                result = variable;
+            } else {
+                if (result.regularExpressionType == RegularExpressionType.Concat) {
+                    result = {
+                        regularExpressionType : result.regularExpressionType,
+                        regularExpressions : [
+                            ...result.regularExpressions,
+                            variable,
+                        ],
+                    };
+                } else {
+                    result = {
+                        regularExpressionType : RegularExpressionType.Concat,
+                        regularExpressions : [
+                            result,
+                            variable,
+                        ],
+                    };
+                }
+            }
+        }
+    }
+
+    if (result == undefined) {
+        throw new Error(`No regular expression parsed`);
+    }
+
+    return result;
+}

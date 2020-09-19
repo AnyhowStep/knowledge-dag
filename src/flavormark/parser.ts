@@ -4,6 +4,7 @@ import {ArgumentParser} from "./block/ArgumentParser";
 import {TruthTableParser} from "./block/TruthTableParser";
 import {DfaParser} from "./block/DfaParser";
 import {NfaParser} from "./block/NfaParser";
+import {RegularExpressionParser} from "./block/RegularExpressionParser";
 import {OldStyleAtxHeadingParser} from "./block/OldStyleAtxHeadingParser";
 
 import {TexSingleBackslashParser} from "./inline/TexSingleBackslashParser";
@@ -51,6 +52,7 @@ import {ArgumentRenderer} from "./render/ArgumentRenderer";
 import {TruthTableRenderer} from "./render/TruthTableRenderer";
 import {DfaRenderer} from "./render/DfaRenderer";
 import {NfaRenderer} from "./render/NfaRenderer";
+import {RegularExpressionRenderer} from "./render/RegularExpressionRenderer";
 import {TooltipRenderer} from "./render/TooltipRenderer";
 
 const tbodyParser = new fm.Gfm.Block.TbodyParser();
@@ -134,6 +136,7 @@ export const reactRenderer = new ReactRenderer([
     new TruthTableRenderer(),
     new DfaRenderer(),
     new NfaRenderer(),
+    new RegularExpressionRenderer(),
     new TooltipRenderer(),
 
     new TestSubRenderer(),
@@ -181,6 +184,7 @@ const blockParserCollection = new fm.BlockParserCollection(
 
     .add(new DfaParser())
     .add(new NfaParser())
+    .add(new RegularExpressionParser())
 
     .add(listParser)
     .add(new fm.CommonMark.Block.TextParser());

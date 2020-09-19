@@ -247,6 +247,7 @@ export enum NfaDisplayType {
     Markdown,
     Json,
     Dfa,
+    Language10,
 }
 
 export interface NfaProps {
@@ -260,6 +261,7 @@ export interface NfaState {
 export class Nfa extends Component<NfaProps, NfaState> {
     private formalJsx : JSX.Element|undefined = undefined;
     private dfaJsx    : JSX.Element|undefined = undefined;
+    private language10Jsx : JSX.Element|undefined = undefined;
 
     public constructor (props : NfaProps) {
         super(props);
@@ -269,6 +271,7 @@ export class Nfa extends Component<NfaProps, NfaState> {
         };
         this.formalJsx = undefined;
         this.dfaJsx = undefined;
+        this.language10Jsx = undefined;
     }
     public componentWillReceiveProps (newProps : NfaProps) {
         this.setState({
@@ -277,33 +280,7 @@ export class Nfa extends Component<NfaProps, NfaState> {
         });
         this.formalJsx = undefined;
         this.dfaJsx = undefined;
-    }
-
-    public static RenderDescription (str : string) : JSX.Element|string {
-        str = str.trim();
-        const mathMatch = /^\$(.*[^\\])\$$/.exec(str);
-        if (mathMatch == null) {
-            return str;
-        } else {
-            return <MathRenderer math={mathMatch[1]} block={false}/>;
-        }
-    }
-    public static RenderDependsOn (dependsOn : number[], inferenceIndex : number) : JSX.Element[] {
-        const result : JSX.Element[] = [];
-        dependsOn = dependsOn.sort((a, b) => a-b);
-        for (let i=0; i<dependsOn.length; ++i) {
-            const cur = dependsOn[i];
-            const text = (i == 0) ?
-                (cur+1) :
-                ", " + (cur+1);
-            result.push(
-                <span style={{
-                    backgroundColor : (cur >= inferenceIndex) ?
-                        "red" : "initial",
-                }} key={text}>{text}</span>
-            );
-        }
-        return result;
+        this.language10Jsx = undefined;
     }
 
     private graphContainer : HTMLElement|null = null;
@@ -737,6 +714,29 @@ export class Nfa extends Component<NfaProps, NfaState> {
         return this.dfaJsx;
     }
 
+    private renderLanguage10 () {
+        if (
+            this.state.displayType == NfaDisplayType.Language10 &&
+            this.language10Jsx == undefined
+        ) {
+            const nfa = NfaUtil.removeInvalidTransitions(this.state.nfa);
+            const language10 = NfaUtil.generateLanguage({
+                nfa,
+                maxLength : 10,
+            });
+
+            this.language10Jsx = <textarea
+                rows={Math.floor(language10.size / 7)+2}
+                style={{
+                    width : "100%",
+                }}
+                value={[...language10].map(s => JSON.stringify(s)).join(", ")}
+            />;
+        }
+
+        return this.language10Jsx;
+    }
+
     public render () {
         return (
             <div>
@@ -847,6 +847,15 @@ export class Nfa extends Component<NfaProps, NfaState> {
                 >
                     {this.renderDfa(true)}
                 </div>
+                <div
+                    style={{
+                        display : this.state.displayType == NfaDisplayType.Language10 ?
+                            "block" :
+                            "none"
+                    }}
+                >
+                    {this.renderLanguage10()}
+                </div>
                 <div className="ui icon buttons">
                     <select className="ui huge button" onChange={(e) => {
                         if (
@@ -869,6 +878,7 @@ export class Nfa extends Component<NfaProps, NfaState> {
                         <option value={NfaDisplayType.Markdown}>Markdown</option>
                         <option value={NfaDisplayType.Json}>Json</option>
                         <option value={NfaDisplayType.Dfa}>Dfa</option>
+                        <option value={NfaDisplayType.Language10}>Language10</option>
                     </select>
                 </div>
                 <br/>

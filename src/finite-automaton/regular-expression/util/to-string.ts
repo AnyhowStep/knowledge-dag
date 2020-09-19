@@ -5,11 +5,11 @@ export function toString (
 ) : string {
     switch (regularExpression.regularExpressionType) {
         case RegularExpressionType.Parentheses:
-            return `(${toString(regularExpression.regularExpression)})`;
+            return `(${toString(regularExpression.subExpr)})`;
         case RegularExpressionType.Variable:
             return regularExpression.identifier;
         case RegularExpressionType.Star: {
-            const subExpr = regularExpression.regularExpression;
+            const subExpr = regularExpression.subExpr;
             switch (subExpr.regularExpressionType) {
                 case RegularExpressionType.Parentheses:
                 case RegularExpressionType.Variable:
@@ -23,36 +23,24 @@ export function toString (
             throw new Error(`Unimplemented ${(subExpr as RegularExpressionDeclaration).regularExpressionType}*`);
         }
         case RegularExpressionType.Concat: {
-            const arr = regularExpression.regularExpressions.map((subExpr) : string => {
+            const arr = [regularExpression.lhs, regularExpression.rhs].map((subExpr) : string => {
                 switch (subExpr.regularExpressionType) {
                     case RegularExpressionType.Parentheses:
                     case RegularExpressionType.Variable:
-                        return toString(subExpr);
                     case RegularExpressionType.Star:
-                        return `(${toString(subExpr)})`;
                     case RegularExpressionType.Concat:
                         return toString(subExpr);
                     case RegularExpressionType.Union:
-                        return `(${toString(subExpr)})*`;
+                        return `(${toString(subExpr)})`;
                 }
             });
             return arr.join("");
         }
         case RegularExpressionType.Union: {
-            const arr = regularExpression.regularExpressions.map((subExpr) : string => {
-                switch (subExpr.regularExpressionType) {
-                    case RegularExpressionType.Parentheses:
-                    case RegularExpressionType.Variable:
-                        return toString(subExpr);
-                    case RegularExpressionType.Star:
-                        return toString(subExpr);
-                    case RegularExpressionType.Concat:
-                        return toString(subExpr);
-                    case RegularExpressionType.Union:
-                        return toString(subExpr);
-                }
+            const arr = [regularExpression.lhs, regularExpression.rhs].map((subExpr) : string => {
+                return toString(subExpr);
             });
-            return arr.join("");
+            return arr.join(" \\cup ");
         }
     }
 }

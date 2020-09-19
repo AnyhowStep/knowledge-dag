@@ -1,24 +1,19 @@
 import * as fm from "flavormark";
-import {NfaNode} from "./NfaNode";
+import {RegularExpressionNode} from "./RegularExpressionNode";
 
 /*
-    |Dfa|
-    a,b,c,d
-    q0
-    q3|q4
-    q0 | q0,q1 | q2 | q1 | q1 |
-    q1 | q3,q4 | q2 | q0 | q1 |
-    q2 |       | q1 | q3 | q1 |
-    q3 | q2    | q1 | q4 | q3 | q3
-    q4 | q1    | q4 | q2 | q0 | q1,q2
+    |Regular Expression|
+    abab
+    \\circ
+    cdcd
 */
-export class NfaParser extends fm.BlockParser<NfaNode> {
+export class RegularExpressionParser extends fm.BlockParser<RegularExpressionNode> {
     public acceptsLines = false;
     public parseInlines = false;
     public isLeaf = true;
     public acceptLazyContinuation = true;
 
-    public constructor (nodeCtor : fm.BlockNodeCtor<NfaNode> = NfaNode) {
+    public constructor (nodeCtor : fm.BlockNodeCtor<RegularExpressionNode> = RegularExpressionNode) {
         super(nodeCtor);
     }
 
@@ -27,14 +22,14 @@ export class NfaParser extends fm.BlockParser<NfaNode> {
             return false;
         }
         const paragraphStr = parser.getParagraphString(node);
-        const match = /^\|Nfa\|\s*(.+?)?\s*$/.exec(paragraphStr);
+        const match = /^\|Regular Expression\|\s*(.+?)?\s*$/.exec(paragraphStr);
         if (match == undefined) {
             return false;
         }
         const line = parser.currentLine.slice(parser.nextNonspace);
-        const nfa : NfaNode = parser.addChild(this, parser.nextNonspace);
-        nfa.name = match[1] == undefined ? "" : match[1];
-        nfa.rawAlphabet = line;
+        const re : RegularExpressionNode = parser.addChild(this, parser.nextNonspace);
+        re.name = match[1] == undefined ? "" : match[1];
+        re.rawRegularExpression = line;
         node.unlink();
         parser.advanceOffset(parser.currentLine.length);
         return true;
@@ -42,19 +37,13 @@ export class NfaParser extends fm.BlockParser<NfaNode> {
     public continue () : boolean {
         return false;
     }
-    public lazyContinue (parser: fm.Parser, node: NfaNode) : void {
+    public lazyContinue (parser: fm.Parser, node: RegularExpressionNode) : void {
         if (parser.blank) {
             parser.finalize(node, parser.lineNumber);
             return;
         }
         const line = parser.currentLine.slice(parser.nextNonspace);
-        if (node.rawStartState == "") {
-            node.rawStartState = line;
-        } else if (node.rawAcceptStates == "") {
-            node.rawAcceptStates = line;
-        } else {
-            node.rawTransitions.push(line);
-        }
+        node.rawRegularExpression += line;
     }
     public finalize () {}
     public canContain () { return false; }
