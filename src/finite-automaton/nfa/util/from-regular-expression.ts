@@ -41,6 +41,40 @@ export function fromRegularExpression (
                 ],
             };
         }
+        case RegularExpressionType.VarEpsilon: {
+            const startState = getNextStateName();
+            return {
+                name : regularExpression.identifier,
+                alphabet : [],
+                startState,
+                acceptStates : [startState],
+                transitions : [
+                    {
+                        srcState : startState,
+                        dstStateSets : [
+                            [],
+                        ],
+                    },
+                ],
+            };
+        }
+        case RegularExpressionType.VarNothing: {
+            const startState = getNextStateName();
+            return {
+                name : regularExpression.identifier,
+                alphabet : [],
+                startState,
+                acceptStates : [],
+                transitions : [
+                    {
+                        srcState : startState,
+                        dstStateSets : [
+                            [],
+                        ],
+                    },
+                ],
+            };
+        }
         case RegularExpressionType.Star: {
             const startState = getNextStateName();
             const acceptState = getNextStateName();

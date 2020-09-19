@@ -79,8 +79,18 @@ function tokenize (str : string, state : { index : number }) {
                         regularExpressionType : RegularExpressionType.Union,
                         value : "\\cup",
                     });
+                } else if (tryConsumeString(str, state, "varepsilon")) {
+                    tokens.push({
+                        regularExpressionType : RegularExpressionType.VarEpsilon,
+                        value : "\\varepsilon",
+                    });
+                } else if (tryConsumeString(str, state, "varnothing")) {
+                    tokens.push({
+                        regularExpressionType : RegularExpressionType.VarNothing,
+                        value : "\\varnothing",
+                    });
                 } else {
-                    throw new Error(`Expected \\circ or \\cup`);
+                    throw new Error(`Expected \\circ, \\cup, \\varepsilon, \\varnothing`);
                 }
                 break;
             }
@@ -105,11 +115,15 @@ function addExplicitConcatenations (tokens : Token[]) {
         const curCanInsertConcat = (
             cur.regularExpressionType == RegularExpressionType.Parentheses && cur.value == ")" ||
             cur.regularExpressionType == RegularExpressionType.Variable ||
+            cur.regularExpressionType == RegularExpressionType.VarEpsilon ||
+            cur.regularExpressionType == RegularExpressionType.VarNothing ||
             cur.regularExpressionType == RegularExpressionType.Star
         );
         const nxtCanInsertConcat = (
             nxt.regularExpressionType == RegularExpressionType.Parentheses && nxt.value == "(" ||
-            nxt.regularExpressionType == RegularExpressionType.Variable
+            nxt.regularExpressionType == RegularExpressionType.Variable ||
+            nxt.regularExpressionType == RegularExpressionType.VarEpsilon ||
+            nxt.regularExpressionType == RegularExpressionType.VarNothing
         );
 
         if (curCanInsertConcat && nxtCanInsertConcat) {
@@ -150,6 +164,26 @@ function parse (tokens : Token[], state : { index : number }) : RegularExpressio
         case "\\circ":
         case "\\cup": {
             throw new Error(`Unexpected ${token.value}`);
+        }
+        case "\\varepsilon": {
+            return tryParseOp(
+                tokens,
+                state,
+                {
+                    regularExpressionType : RegularExpressionType.VarEpsilon,
+                    identifier : token.value,
+                }
+            );
+        }
+        case "\\varnothing": {
+            return tryParseOp(
+                tokens,
+                state,
+                {
+                    regularExpressionType : RegularExpressionType.VarNothing,
+                    identifier : token.value,
+                }
+            );
         }
         default: {
             return tryParseOp(

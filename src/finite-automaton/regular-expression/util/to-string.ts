@@ -7,12 +7,16 @@ export function toString (
         case RegularExpressionType.Parentheses:
             return `(${toString(regularExpression.subExpr)})`;
         case RegularExpressionType.Variable:
+        case RegularExpressionType.VarEpsilon:
+        case RegularExpressionType.VarNothing:
             return regularExpression.identifier;
         case RegularExpressionType.Star: {
             const subExpr = regularExpression.subExpr;
             switch (subExpr.regularExpressionType) {
                 case RegularExpressionType.Parentheses:
                 case RegularExpressionType.Variable:
+                case RegularExpressionType.VarEpsilon:
+                case RegularExpressionType.VarNothing:
                     return `${toString(subExpr)}*`;
                 case RegularExpressionType.Star:
                     return toString(subExpr);
@@ -27,6 +31,8 @@ export function toString (
                 switch (subExpr.regularExpressionType) {
                     case RegularExpressionType.Parentheses:
                     case RegularExpressionType.Variable:
+                    case RegularExpressionType.VarEpsilon:
+                    case RegularExpressionType.VarNothing:
                     case RegularExpressionType.Star:
                     case RegularExpressionType.Concat:
                         return toString(subExpr);

@@ -6,6 +6,12 @@ const finite_automaton_1 = require("../../../../../../../dist/finite-automaton")
 tape(__filename, (t) => {
     for (const { nfa: nfa1, language10: language10_1 } of nfa_collection_1.language10Collection) {
         for (const { nfa: nfa2, language10: language10_2 } of nfa_collection_1.language10Collection) {
+            if (nfa1.name == "N3" &&
+                nfa2.name == "N3") {
+                //This test would take too long to compute
+                continue;
+            }
+            console.log(`${nfa1.name} \\circ ${nfa2.name} test`);
             const nfa3 = finite_automaton_1.NfaUtil.concatenation(nfa1, nfa2);
             const language10_3 = finite_automaton_1.NfaUtil.generateLanguage({
                 nfa: nfa3,
