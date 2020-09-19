@@ -2,6 +2,7 @@ import * as React from "react";
 import {Component} from "react";
 import {RegularExpressionUtil, RegularExpressionDeclaration, NfaUtil} from "../../finite-automaton";
 import {Nfa} from "./Nfa";
+import {MathRenderer} from "./MathRenderer";
 
 export enum RegularExpressionDisplayType {
     Text,
@@ -47,7 +48,10 @@ export class RegularExpression extends Component<RegularExpressionProps, Regular
         const lines : string[] = [];
         lines.push(RegularExpressionUtil.toString(regularExpression));
 
-        return <div>{lines.join("\n")}</div>;
+        return <MathRenderer
+            math={lines.join("\n")}
+            block={true}
+        />;
     }
 
     private renderMarkdown () {

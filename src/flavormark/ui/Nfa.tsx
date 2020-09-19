@@ -4,8 +4,9 @@ import {MathRenderer} from "./MathRenderer";
 import {getMathJax} from "../interop/MathJax";
 import "vis/dist/vis.min.css";
 import * as vis from "vis";
-import {NfaUtil, NfaDeclaration, DfaUtil} from "../../finite-automaton";
+import {NfaUtil, NfaDeclaration, DfaUtil, ReaUtil} from "../../finite-automaton";
 import {Dfa} from "./Dfa";
+import {RegularExpression} from "./RegularExpression";
 
 const brightColors = [
     //"#800000", //Maroon
@@ -248,6 +249,7 @@ export enum NfaDisplayType {
     Json,
     Dfa,
     Language10,
+    RegularExpression,
 }
 
 export interface NfaProps {
@@ -262,6 +264,7 @@ export class Nfa extends Component<NfaProps, NfaState> {
     private formalJsx : JSX.Element|undefined = undefined;
     private dfaJsx    : JSX.Element|undefined = undefined;
     private language10Jsx : JSX.Element|undefined = undefined;
+    private regularExpressionJsx : JSX.Element|undefined = undefined;
 
     public constructor (props : NfaProps) {
         super(props);
@@ -272,6 +275,7 @@ export class Nfa extends Component<NfaProps, NfaState> {
         this.formalJsx = undefined;
         this.dfaJsx = undefined;
         this.language10Jsx = undefined;
+        this.regularExpressionJsx = undefined;
     }
     public componentWillReceiveProps (newProps : NfaProps) {
         this.setState({
@@ -281,6 +285,7 @@ export class Nfa extends Component<NfaProps, NfaState> {
         this.formalJsx = undefined;
         this.dfaJsx = undefined;
         this.language10Jsx = undefined;
+        this.regularExpressionJsx = undefined;
     }
 
     private graphContainer : HTMLElement|null = null;
@@ -737,6 +742,21 @@ export class Nfa extends Component<NfaProps, NfaState> {
         return this.language10Jsx;
     }
 
+    private renderRegularExpression () {
+        if (
+            this.state.displayType == NfaDisplayType.RegularExpression &&
+            this.regularExpressionJsx == undefined
+        ) {
+            const nfa = NfaUtil.removeInvalidTransitions(this.state.nfa);
+            const rea = ReaUtil.fromNfa(nfa);
+            const regularExpression = ReaUtil.toRegularExpression(rea);
+
+            this.regularExpressionJsx = <RegularExpression regularExpression={regularExpression}/>;
+        }
+
+        return this.regularExpressionJsx;
+    }
+
     public render () {
         return (
             <div>
@@ -856,6 +876,15 @@ export class Nfa extends Component<NfaProps, NfaState> {
                 >
                     {this.renderLanguage10()}
                 </div>
+                <div
+                    style={{
+                        display : this.state.displayType == NfaDisplayType.RegularExpression ?
+                            "block" :
+                            "none"
+                    }}
+                >
+                    {this.renderRegularExpression()}
+                </div>
                 <div className="ui icon buttons">
                     <select className="ui huge button" onChange={(e) => {
                         if (
@@ -879,6 +908,7 @@ export class Nfa extends Component<NfaProps, NfaState> {
                         <option value={NfaDisplayType.Json}>Json</option>
                         <option value={NfaDisplayType.Dfa}>Dfa</option>
                         <option value={NfaDisplayType.Language10}>Language10</option>
+                        <option value={NfaDisplayType.RegularExpression}>Regular Expression</option>
                     </select>
                 </div>
                 <br/>

@@ -31,11 +31,12 @@ function tryRemoveOneTrivialEpsilonTransition (
          */
         const newDstStateSets = transition.dstStateSets.map((dstStateSet, index) => {
             const otherDstStateSet = epsilonTransition.dstStateSets[index];
-            if (dstStateSet == epsilonDstStateSet) {
-                return [];
-            }
 
-            const newDstStateSet = [...dstStateSet];
+            const newDstStateSet = (
+                dstStateSet == epsilonDstStateSet ?
+                [] :
+                [...dstStateSet]
+            );
             for (const dstState of otherDstStateSet) {
                 if (!newDstStateSet.includes(dstState)) {
                     newDstStateSet.push(dstState);
