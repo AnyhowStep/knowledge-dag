@@ -4,7 +4,8 @@ import {MathRenderer} from "./MathRenderer";
 import {getMathJax} from "../interop/MathJax";
 import "vis/dist/vis.min.css";
 import * as vis from "vis";
-import {DfaUtil, DfaDeclaration} from "../../finite-automaton";
+import {DfaUtil, DfaDeclaration, NfaUtil} from "../../finite-automaton";
+import {Nfa} from "./Nfa";
 
 const brightColors = [
     //"#800000", //Maroon
@@ -146,6 +147,7 @@ export enum DfaDisplayType {
     EnlargedGraph,
     Formal,
     Markdown,
+    Nfa,
     Json,
     Language10,
 }
@@ -160,6 +162,7 @@ export interface DfaState {
 
 export class Dfa extends Component<DfaProps, DfaState> {
     private formalJsx : JSX.Element|undefined = undefined;
+    private nfaJsx    : JSX.Element|undefined = undefined;
     private language10Jsx : JSX.Element|undefined = undefined;
 
     public constructor (props : DfaProps) {
@@ -169,6 +172,7 @@ export class Dfa extends Component<DfaProps, DfaState> {
             displayType : DfaDisplayType.Graph,
         };
         this.formalJsx = undefined;
+        this.nfaJsx = undefined;
         this.language10Jsx = undefined;
     }
     public componentWillReceiveProps (newProps : DfaProps) {
@@ -177,6 +181,7 @@ export class Dfa extends Component<DfaProps, DfaState> {
             displayType : DfaDisplayType.Graph,
         });
         this.formalJsx = undefined;
+        this.nfaJsx = undefined;
         this.language10Jsx = undefined;
     }
 
@@ -578,6 +583,27 @@ export class Dfa extends Component<DfaProps, DfaState> {
         ></textarea>;
     }
 
+    private renderNfa (prune : boolean) {
+        if (
+            this.state.displayType == DfaDisplayType.Nfa &&
+            this.nfaJsx == undefined
+        ) {
+            const dfa = (
+                prune ?
+                DfaUtil.removeInvalidTransitions(this.state.dfa) :
+                this.state.dfa
+            );
+            let nfa = NfaUtil.fromDfa(dfa);
+            if (prune) {
+                nfa = NfaUtil.removeInvalidTransitions(nfa);
+            }
+
+            this.nfaJsx = <Nfa nfa={nfa}/>;
+        }
+
+        return this.nfaJsx;
+    }
+
     private renderLanguage10 () {
         if (
             this.state.displayType == DfaDisplayType.Language10 &&
@@ -704,6 +730,15 @@ export class Dfa extends Component<DfaProps, DfaState> {
                 </div>
                 <div
                     style={{
+                        display : this.state.displayType == DfaDisplayType.Nfa ?
+                            "block" :
+                            "none"
+                    }}
+                >
+                    {this.renderNfa(true)}
+                </div>
+                <div
+                    style={{
                         display : this.state.displayType == DfaDisplayType.Language10 ?
                             "block" :
                             "none"
@@ -732,6 +767,7 @@ export class Dfa extends Component<DfaProps, DfaState> {
                         <option value={DfaDisplayType.Formal}>Formal</option>
                         <option value={DfaDisplayType.Markdown}>Markdown</option>
                         <option value={DfaDisplayType.Json}>Json</option>
+                        <option value={DfaDisplayType.Nfa}>Nfa</option>
                         <option value={DfaDisplayType.Language10}>Language10</option>
                     </select>
                 </div>

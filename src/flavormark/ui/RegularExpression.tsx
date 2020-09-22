@@ -138,7 +138,8 @@ export class RegularExpression extends Component<RegularExpressionProps, Regular
                             "none"
                         ),
                         width : "100%",
-                        border : "2px solid #000000"
+                        border : "2px solid #000000",
+                        overflow : "auto",
                     }}
                 >
                     {this.renderText()}
