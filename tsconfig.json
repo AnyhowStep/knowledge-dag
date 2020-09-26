@@ -6,6 +6,7 @@
         { "path" : "src/polyfilled-bigint" },
         { "path" : "src/dag" },
         { "path" : "src/finite-automaton" },
+        { "path" : "src/pushdown-automaton" },
         { "path" : "src/mapper" },
         { "path" : "src/table" },
         { "path" : "src/dao" },

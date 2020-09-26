@@ -237,11 +237,25 @@ function tryParseOp (
             );
         }
         case "\\circ": {
-            return {
-                regularExpressionType : RegularExpressionType.Concat,
-                lhs,
-                rhs : parse(tokens, state),
-            };
+            const rhs = parse(tokens, state);
+            if (rhs.regularExpressionType == RegularExpressionType.Union) {
+                const newUnion = {
+                    regularExpressionType : RegularExpressionType.Union,
+                    lhs : {
+                        regularExpressionType : RegularExpressionType.Concat,
+                        lhs,
+                        rhs : rhs.lhs,
+                    },
+                    rhs : rhs.rhs,
+                } as const;
+                return newUnion;
+            } else {
+                return {
+                    regularExpressionType : RegularExpressionType.Concat,
+                    lhs,
+                    rhs,
+                };
+            }
         }
         case "\\cup": {
             return {
