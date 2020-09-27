@@ -35,10 +35,10 @@ function generateCfgStringsImpl (
         curDepth,
     } : GenerateCfgStringsImplArgs
 ) : CfgString[]|undefined {
-    if (curBreadth >= maxBreadth) {
+    if (curBreadth > maxBreadth) {
         return undefined;
     }
-    if (curDepth >= maxDepth) {
+    if (curDepth > maxDepth) {
         return undefined;
     }
 
@@ -47,43 +47,47 @@ function generateCfgStringsImpl (
     const result : CfgString[] = [];
 
     for (const rule of rules) {
-        const parts : (string|(readonly CfgString[]))[] = [];
 
-        let varCount = 0;
+        for (const str of rule.strings) {
+            const parts : (string|(readonly CfgString[]))[] = [];
 
-        for (const substr of rule.str) {
-            switch (substr.subStringType) {
-                case CfgSubstringType.Terminal: {
-                    parts.push(substr.value);
-                    break;
-                }
-                case CfgSubstringType.Variable: {
-                    ++varCount;
-                    const subResult = generateCfgStringsImpl({
-                        cfg,
-                        maxBreadth,
-                        maxDepth,
-
-                        curState : substr.identifier,
-                        curBreadth : curBreadth + varCount,
-                        curDepth : curDepth + 1,
-                    });
-                    if (subResult == undefined) {
+            let varCount = 0;
+            for (const substr of str) {
+                switch (substr.subStringType) {
+                    case CfgSubstringType.Terminal: {
+                        parts.push(substr.value);
                         break;
                     }
-                    parts.push(subResult);
-                    break;
+                    case CfgSubstringType.Variable: {
+                        ++varCount;
+                        const subResult = generateCfgStringsImpl({
+                            cfg,
+                            maxBreadth,
+                            maxDepth,
+
+                            curState : substr.identifier,
+                            curBreadth : curBreadth + varCount,
+                            curDepth : curDepth + 1,
+                        });
+                        if (subResult == undefined) {
+                            break;
+                        }
+                        parts.push(subResult);
+                        break;
+                    }
                 }
             }
-        }
 
-        if (parts.length != rule.str.length) {
-            return undefined;
+            if (parts.length == str.length) {
+                result.push({
+                    parts,
+                });
+            }
         }
+    }
 
-        result.push({
-            parts,
-        });
+    if (result.length == 0) {
+        return undefined;
     }
 
     return result;
@@ -143,7 +147,7 @@ export function generateLanguageFromCfgString (
             for (const w1 of result) {
                 const newW = w1 + part;
                 if (newW.length <= maxLength) {
-                    newResult.add(w1 + part);
+                    newResult.add(newW);
                 }
             }
 
@@ -193,8 +197,8 @@ export function generateLanguage (
 ) {
     const cfgStrings = generateCfgStrings({
         cfg,
-        maxBreadth : maxLength,
-        maxDepth : maxLength,
+        maxBreadth : maxLength * 2,
+        maxDepth : maxLength * 2,
     });
 
     const result = new Set<string>();
@@ -210,4 +214,122 @@ export function generateLanguage (
     }
 
     return result;
+}
+
+class TokenSet {
+    private map = new Map<string, string[]>();
+
+    public add (arr : readonly string[]) : void {
+        const key = arr.join("\0");
+        if (this.map.has(key)) {
+            return;
+        }
+        this.map.set(key, [...arr]);
+    }
+
+    public toArray () {
+        return [...this.map.values()];
+    }
+
+    public [Symbol.iterator] () : IterableIterator<string[]> {
+        return this.map.values();
+    }
+
+    public get size () {
+        return this.map.size;
+    }
+}
+
+export interface GenerateTokenLanguageFromCfgStringArgs {
+    readonly cfgString : CfgString,
+    readonly maxLength : number,
+}
+
+export function generateTokenLanguageFromCfgString (
+    {
+        cfgString,
+        maxLength,
+    } : GenerateLanguageFromCfgStringArgs
+) : string[][] {
+    let result = new TokenSet();
+    result.add([]);
+    let shortestWordLength = 0;
+
+    for (const part of cfgString.parts) {
+        if (result.size == 0) {
+            return result.toArray();
+        }
+
+        if (typeof part == "string") {
+            const newResult = new TokenSet();
+            for (const w1 of result) {
+                const newW = [...w1, part];
+                if (newW.length <= maxLength) {
+                    newResult.add(newW);
+                }
+            }
+
+            result = newResult;
+            shortestWordLength += 1;
+        } else {
+            const subResult = new TokenSet();
+            for (const subPart of part) {
+                const subPartStrs = generateTokenLanguageFromCfgString({
+                    cfgString : subPart,
+                    maxLength : maxLength - shortestWordLength,
+                });
+                for (const subPartStr of subPartStrs) {
+                    subResult.add(subPartStr);
+                }
+            }
+            const newResult = new TokenSet();
+            let newShortestWordLength = Number.MAX_SAFE_INTEGER;
+            for (const w1 of result) {
+                for (const w2 of subResult) {
+                    const newW = [...w1, ...w2];
+                    if (newW.length <= maxLength) {
+                        newResult.add(newW);
+                        if (newW.length <= newShortestWordLength) {
+                            newShortestWordLength = newW.length;
+                        }
+                    }
+                }
+            }
+            result = newResult;
+            shortestWordLength = newShortestWordLength;
+        }
+    }
+
+    return result.toArray();
+}
+
+export interface GenerateTokenLanguageArgs {
+    readonly cfg : CfgDeclaration,
+    readonly maxLength : number,
+}
+export function generateTokenLanguage (
+    {
+        cfg,
+        maxLength,
+    } : GenerateTokenLanguageArgs
+) {
+    const cfgStrings = generateCfgStrings({
+        cfg,
+        maxBreadth : maxLength * 2,
+        maxDepth : maxLength * 2,
+    });
+
+    const result = new TokenSet();
+
+    for (const cfgString of cfgStrings) {
+        const subResult = generateTokenLanguageFromCfgString({
+            cfgString,
+            maxLength,
+        });
+        for (const str of subResult) {
+            result.add(str);
+        }
+    }
+
+    return result.toArray();
 }

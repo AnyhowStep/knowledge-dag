@@ -1,6 +1,7 @@
 export * from "./AnchorItem";
 export * from "./Argument";
 export * from "./Button";
+export * from "./Cfg";
 export * from "./CodeBlock";
 export * from "./Dfa";
 export * from "./ErrorMessage";

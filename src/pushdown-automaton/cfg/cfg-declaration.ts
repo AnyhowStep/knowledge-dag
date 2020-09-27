@@ -13,14 +13,17 @@ export interface CfgSubstringTerminal {
     readonly value : string;
 }
 
+export type CfgString = readonly (CfgSubstringVariable|CfgSubstringTerminal)[];
+
 export interface CfgRule {
     readonly variable : string;
-    readonly str : readonly (CfgSubstringVariable|CfgSubstringTerminal)[];
+    readonly strings : readonly CfgString[];
 }
 
 /**
  * Start variable is the variable of the first rule.
  */
 export interface CfgDeclaration {
+    readonly name? : string,
     readonly rules : readonly CfgRule[];
 }

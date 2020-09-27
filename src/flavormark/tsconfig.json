@@ -8,7 +8,8 @@
     },
     "references" : [
         { "path": "../dag" },
-        { "path": "../finite-automaton" }
+        { "path": "../finite-automaton" },
+        { "path": "../pushdown-automaton" }
     ],
     "include" : [
         "./**/*.ts",
