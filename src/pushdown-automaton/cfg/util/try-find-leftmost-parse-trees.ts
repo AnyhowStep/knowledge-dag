@@ -22,6 +22,7 @@ export interface TryFindLeftmostParseTreesImplArgs {
     readonly inputIndex : number,
 
     readonly curVariable : string;
+    readonly curDepth : number,
 }
 
 export interface ParseResult {
@@ -39,8 +40,13 @@ export function tryFindLeftmostParseTreesImpl (
         inputStr,
         inputIndex,
         curVariable,
+        curDepth,
     } : TryFindLeftmostParseTreesImplArgs
 ) : ParseResult[] {
+    if (inputIndex > inputStr.length) {
+        return [];
+    }
+
     const strings = ([] as CfgString[]).concat(
         ...cfg.rules
             .filter(rule => rule.variable == curVariable)
@@ -65,7 +71,7 @@ export function tryFindLeftmostParseTreesImpl (
                 const newStates : (typeof states[number])[] = [];
                 for (const state of states) {
                     if (state.curIndex+subStr.value.length > inputStr.length) {
-                        break;
+                        continue;
                     }
                     const inputSubStr = inputStr.substr(state.curIndex, subStr.value.length);
                     if (inputSubStr == subStr.value) {
@@ -73,7 +79,11 @@ export function tryFindLeftmostParseTreesImpl (
                             curIndex : state.curIndex + subStr.value.length,
                             children : [
                                 ...state.children,
-                                subStr
+                                //We want a copy here, to generate a proper derivation
+                                //where every terminal is a different instance
+                                {
+                                    ...subStr,
+                                }
                             ],
                         });
                     }
@@ -83,11 +93,15 @@ export function tryFindLeftmostParseTreesImpl (
             } else {
                 const newStates : (typeof states[number])[] = [];
                 for (const state of states) {
+                    if (state.curIndex > inputStr.length) {
+                        continue;
+                    }
                     const subTrees = tryFindLeftmostParseTreesImpl({
                         cfg,
                         inputStr,
                         inputIndex : state.curIndex,
                         curVariable : subStr.identifier,
+                        curDepth : curDepth + 1,
                     });
                     for (const subTree of subTrees) {
                         newStates.push({
@@ -130,6 +144,7 @@ export function tryFindLeftmostParseTrees (
         inputStr,
         inputIndex : 0,
         curVariable : cfg.rules[0].variable,
+        curDepth : 0,
     });
     return results.filter(r => r.curIndex == inputStr.length);
 }

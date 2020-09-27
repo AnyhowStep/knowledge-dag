@@ -197,8 +197,8 @@ export function generateLanguage (
 ) {
     const cfgStrings = generateCfgStrings({
         cfg,
-        maxBreadth : maxLength * 2,
-        maxDepth : maxLength * 2,
+        maxBreadth : maxLength + 2,
+        maxDepth : maxLength + 2,
     });
 
     const result = new Set<string>();
@@ -315,8 +315,8 @@ export function generateTokenLanguage (
 ) {
     const cfgStrings = generateCfgStrings({
         cfg,
-        maxBreadth : maxLength * 2,
-        maxDepth : maxLength * 2,
+        maxBreadth : maxLength + 2,
+        maxDepth : maxLength + 2,
     });
 
     const result = new TokenSet();

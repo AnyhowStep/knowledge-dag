@@ -3,7 +3,7 @@ import {Component} from "react";
 import {MathRenderer} from "./MathRenderer";
 import "vis/dist/vis.min.css";
 import {CfgUtil, CfgDeclaration, CfgSubstringType} from "../../pushdown-automaton";
-import {DerivationString} from "../../../dist/pushdown-automaton/cfg/util";
+import {CfgParseTreeCollection} from "./CfgParseTreeCollection";
 
 export enum CfgDisplayType {
     Formal,
@@ -21,9 +21,7 @@ export interface CfgState {
     cfg : CfgDeclaration,
     displayType : CfgDisplayType,
     inputStr : string,
-    parseTreesStr : string,
-    derivationsStr : string,
-    derivations : DerivationString[][],
+    parseTreesJsx : JSX.Element|undefined,
 }
 
 export class Cfg extends Component<CfgProps, CfgState> {
@@ -37,9 +35,7 @@ export class Cfg extends Component<CfgProps, CfgState> {
             cfg : props.cfg,
             displayType : CfgDisplayType.Formal,
             inputStr : "",
-            parseTreesStr : "",
-            derivationsStr : "",
-            derivations : [],
+            parseTreesJsx : undefined,
         };
         this.formalJsx = undefined;
         this.language10Jsx = undefined;
@@ -50,9 +46,7 @@ export class Cfg extends Component<CfgProps, CfgState> {
             cfg : newProps.cfg,
             displayType : CfgDisplayType.Formal,
             inputStr : "",
-            parseTreesStr : "",
-            derivationsStr : "",
-            derivations : [],
+            parseTreesJsx : undefined,
         });
         this.formalJsx = undefined;
         this.language10Jsx = undefined;
@@ -167,7 +161,6 @@ export class Cfg extends Component<CfgProps, CfgState> {
             this.state.displayType == CfgDisplayType.Language10 &&
             this.language10Jsx == undefined
         ) {
-            debugger;
             const cfg = this.state.cfg;
             const language10 = CfgUtil.generateLanguage({
                 cfg,
@@ -191,7 +184,6 @@ export class Cfg extends Component<CfgProps, CfgState> {
             this.state.displayType == CfgDisplayType.TokenLanguage10 &&
             this.tokenLanguage10Jsx == undefined
         ) {
-            debugger;
             const cfg = this.state.cfg;
             const tokenLanguage10 = CfgUtil.generateTokenLanguage({
                 cfg,
@@ -211,52 +203,9 @@ export class Cfg extends Component<CfgProps, CfgState> {
     }
 
     private renderLeftmostParseTrees () {
-        const derivationsMath = this.state.derivations.map(derivation => {
-            const derivationStr = derivation
-                .map(string => {
-                    return `\\Rightarrow ` + string
-                        .map(subStr => {
-                            if (subStr.subStringType == CfgSubstringType.Terminal) {
-                                if (subStr.value == "") {
-                                    return `\\varepsilon`;
-                                } else {
-                                    return `\\texttt{${subStr.value}}`;
-                                }
-                            } else {
-                                return subStr.identifier;
-                            }
-                        })
-                        .join("\\,");
-                })
-                .join("\\\\\n");
-            return derivationStr;
-        })
-        .join("\\\\\n \\hline\n");
-        const derivationsLines = [
-            `\\begin{array}{l}`,
-            derivationsMath,
-            `\\end{array}`
-        ];
         return (
             <div>
-                <textarea
-                    rows={Math.min(20, this.state.parseTreesStr.split("\n").length+2)}
-                    style={{
-                        width : "100%",
-                    }}
-                    value={this.state.parseTreesStr}
-                />
-                <textarea
-                    rows={Math.min(20, this.state.derivationsStr.split("\n").length+2)}
-                    style={{
-                        width : "100%",
-                    }}
-                    value={this.state.derivationsStr}
-                />
-                <MathRenderer
-                    math={derivationsLines.join("\n")}
-                    block={true}
-                />
+                {this.state.parseTreesJsx}
                 <input
                     type="text"
                     value={this.state.inputStr}
@@ -269,20 +218,18 @@ export class Cfg extends Component<CfgProps, CfgState> {
                             if (newInputStr != this.state.inputStr) {
                                 return;
                             }
-                            debugger;
                             const parseTrees = CfgUtil.tryFindLeftmostParseTrees({
                                 cfg : this.state.cfg,
                                 inputStr : this.state.inputStr,
                             });
 
-                            const derivations = parseTrees.map(parseTree => CfgUtil.derivationFromParseTree({
-                                parseTree : parseTree.parseTree,
-                            }));
-
                             this.setState({
-                                parseTreesStr : JSON.stringify(parseTrees, null, 2),
-                                derivationsStr : JSON.stringify(derivations, null, 2),
-                                derivations,
+                                parseTreesJsx : (
+                                    <CfgParseTreeCollection
+                                        key={newInputStr}
+                                        parseTrees={parseTrees.map(parseTree => parseTree.parseTree)}
+                                    />
+                                ),
                             });
 
                         }, 1000);

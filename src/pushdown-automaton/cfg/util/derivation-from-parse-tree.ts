@@ -3,13 +3,13 @@ import {
     CfgSubstringTerminal,
     CfgSubstringType,
 } from "../cfg-declaration";
-import {ParseTreeVariable} from "./try-find-leftmost-parse-trees";
+import {ParseTreeVariable, ParseTree} from "./try-find-leftmost-parse-trees";
 
 export type DerivationString = readonly (CfgSubstringVariable|CfgSubstringTerminal)[];
 
 export interface DerivationFromParseTreeImplArgs {
     readonly parseTree : ParseTreeVariable;
-    readonly result : DerivationString[],
+    readonly result : (readonly ParseTree[])[],
 }
 
 /**
@@ -21,12 +21,12 @@ export function derivationFromParseTreeImpl (
         parseTree,
         result,
     } : DerivationFromParseTreeImplArgs
-) : DerivationString[] {
+) : (readonly ParseTree[])[] {
     if (result.length == 0) {
         result.push([parseTree]);
     }
     const prvDerivationString = result[result.length-1];
-    const index = prvDerivationString.indexOf(parseTree);
+    const index = prvDerivationString.findIndex(d => d == parseTree);
 
     const head = prvDerivationString.slice(0, index);
     const tail = prvDerivationString.slice(index+1);
