@@ -13,11 +13,6 @@ interface GenerateLanguageImplArgs {
     readonly epsilonCheck : readonly string[],
 }
 
-/**
- *
- * @todo Detect epsilon cycles. Do not allow epsilon cycles.
- * @todo Do not consider epsilons as part of the word.
- */
 function generateLanguageImpl (
     {
         nfa,
