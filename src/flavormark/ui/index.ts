@@ -9,6 +9,7 @@ export * from "./HtmlBlock";
 export * from "./LinkButton";
 export * from "./LinkItem";
 export * from "./MathRenderer";
+export * from "./Mermaid";
 export * from "./Nfa";
 export * from "./Npda";
 export * from "./RegularExpression";
