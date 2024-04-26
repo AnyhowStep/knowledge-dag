@@ -39,6 +39,7 @@ const keys = [
 
     //Misc
     "tooltip.md",
+    "ruby.md",
     "escape.md",
     "entity.md",
     "blockquote.md",

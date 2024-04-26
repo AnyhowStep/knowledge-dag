@@ -17,3 +17,17 @@ export class ParagraphRenderer extends ReactSubRenderer<fm.CommonMark.Block.Para
         );
     }
 }
+
+export class InlineParagraphRenderer extends ReactSubRenderer<fm.CommonMark.Block.ParagraphNode> {
+    public constructor () {
+        super(fm.CommonMark.Block.ParagraphNode);
+    }
+    public render (_node : fm.CommonMark.Block.ParagraphNode, children : React.ReactNode[]) : React.ReactNode {
+        return (
+            <React.Fragment>
+                {children}
+            </React.Fragment>
+        );
+    }
+}
+

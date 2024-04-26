@@ -200,7 +200,9 @@ export async function createApp (args : CreateAppArgs) : Promise<CreateAppResult
         if (req.secure || (req.headers.host != undefined && req.headers.host.startsWith("localhost"))) {
             next();
         } else {
-            res.redirect(307, "https://" + req.headers.host + req.url);
+            res;
+            next();
+            //res.redirect(307, "https://" + req.headers.host + req.url);
         }
     });
 

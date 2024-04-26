@@ -11,11 +11,12 @@ import {OldStyleAtxHeadingParser} from "./block/OldStyleAtxHeadingParser";
 
 import {TexSingleBackslashParser} from "./inline/TexSingleBackslashParser";
 import {TooltipParser} from "./inline/TooltipParser";
+import {RubyParser} from "./inline/RubyParser";
 
 import {ReactRenderer} from "./render/ReactRenderer";
 import {TestSubRenderer} from "./render/TestSubRenderer";
 import {TextRenderer} from "./render/TextRenderer";
-import {ParagraphRenderer} from "./render/ParagraphRenderer";
+import {ParagraphRenderer, InlineParagraphRenderer} from "./render/ParagraphRenderer";
 import {TexBlockRenderer} from "./render/TexBlockRenderer";
 import {TexSpanRenderer} from "./render/TexSpanRenderer";
 import {ItemRenderer} from "./render/ItemRenderer";
@@ -24,7 +25,7 @@ import {ThematicBreakRenderer} from "./render/ThematicBreakRenderer";
 import {HeadingRenderer} from "./render/HeadingRenderer";
 import {StrongRenderer} from "./render/StrongRenderer";
 import {EmphasisRenderer} from "./render/EmphasisRenderer";
-import {DocumentRenderer} from "./render/DocumentRenderer";
+import {DocumentRenderer, InlineDocumentRenderer} from "./render/DocumentRenderer";
 import {FencedCodeBlockRenderer} from "./render/FencedCodeBlockRenderer";
 import {HtmlBlockRenderer} from "./render/HtmlBlockRenderer";
 import {IndentedCodeBlockRenderer} from "./render/IndentedCodeBlockRenderer";
@@ -58,6 +59,7 @@ import {RegularExpressionRenderer} from "./render/RegularExpressionRenderer";
 import {CfgRenderer} from "./render/CfgRenderer";
 import {NpdaRenderer} from "./render/NpdaRenderer";
 import {TooltipRenderer} from "./render/TooltipRenderer";
+import {RubyRenderer} from "./render/RubyRenderer";
 
 const tbodyParser = new fm.Gfm.Block.TbodyParser();
 const tdParser = new fm.Gfm.Block.TdParser();
@@ -144,6 +146,57 @@ export const reactRenderer = new ReactRenderer([
     new CfgRenderer(),
     new NpdaRenderer(),
     new TooltipRenderer(),
+    new RubyRenderer(),
+
+    new TestSubRenderer(),
+]);
+
+export const inlineReactRenderer = new ReactRenderer([
+    new InlineParagraphRenderer(),
+    new TexBlockRenderer(),
+    new ListRenderer(),
+    new ItemRenderer(),
+    new ThematicBreakRenderer(),
+    new HeadingRenderer(),
+    new InlineDocumentRenderer(),
+    new FencedCodeBlockRenderer(),
+    new HtmlBlockRenderer(),
+    new IndentedCodeBlockRenderer(),
+    new BlockquoteRenderer(),
+
+    new TableRenderer(),
+    new TbodyRenderer(),
+    new TdRenderer(),
+    new TheadRenderer(),
+    new ThRenderer(),
+    new TrRenderer(),
+
+    new TexSpanRenderer(),
+    new TextRenderer(),
+    new StrongRenderer(),
+    new EmphasisRenderer(),
+    new CodeSpanRenderer(),
+    new SoftbreakRenderer(),
+    new HardbreakRenderer(),
+
+    new SubscriptRenderer(),
+    new SuperscriptRenderer(),
+
+    new LinkRenderer(),
+    new ImageRenderer(),
+
+    new CheckboxRenderer(),
+    new HtmlTagRenderer(),
+
+    new ArgumentRenderer(),
+    new TruthTableRenderer(),
+    new DfaRenderer(),
+    new NfaRenderer(),
+    new RegularExpressionRenderer(),
+    new CfgRenderer(),
+    new NpdaRenderer(),
+    new TooltipRenderer(),
+    new RubyRenderer(),
 
     new TestSubRenderer(),
 ]);
@@ -212,6 +265,7 @@ const inParsers : fm.InlineParser[] = [
     new fm.CommonMark.Inline.EscapeCharacterParser(),
 
     new TooltipParser(),
+    new RubyParser(),
 
     new fm.FlavorMark.Inline.TexSpanParser(),
 
@@ -242,4 +296,7 @@ export function parseAndRender (md : string) {
 }
 export function parseAndRenderReact (md : string) {
     return reactRenderer.render(parser.parse(md));
+}
+export function parseAndRenderReactInline (md : string) {
+    return inlineReactRenderer.render(parser.parse(md));
 }
